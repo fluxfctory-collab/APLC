@@ -1,8 +1,8 @@
 ---
 # DRAFT COPY — for client approval. See COPY-FOR-APPROVAL.md.
 seo:
-  title: "About Helen Popich Harris | Board Certified Family Law Specialist | Lafayette, LA"
-  description: "Helen Popich Harris is a Lafayette, Louisiana family law attorney, a Board Certified Family Law Specialist, and a Fellow of the American Academy of Matrimonial Lawyers."
+  title: "About Helen Popich Harris | Family Law Attorney, Lafayette LA"
+  description: "Lafayette, Louisiana family law attorney Helen Popich Harris is a Board Certified Family Law Specialist and a Fellow of the American Academy of Matrimonial Lawyers."
 hero:
   eyebrow: "About"
   name: "Helen Popich Harris"

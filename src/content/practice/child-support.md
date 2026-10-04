@@ -6,7 +6,7 @@ order: 6
 summary: "Support calculated accurately under Louisiana's guidelines — including cases involving self-employment and complex compensation."
 seo:
   title: "Child Support Attorney in Lafayette, LA | Helen Popich Harris"
-  description: "Child support under the Louisiana guidelines, including business owners, the self-employed, and complex compensation. Lafayette family law attorney Helen Popich Harris."
+  description: "Child support under the Louisiana guidelines, including business owners, the self-employed and complex compensation. Lafayette attorney Helen Popich Harris."
 focus:
   - "Calculations under the Louisiana child support guidelines"
   - "Income of business owners and the self-employed"

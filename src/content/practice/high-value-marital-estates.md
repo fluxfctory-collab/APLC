@@ -8,8 +8,8 @@ short_title: "High-Value Estates"
 order: 3
 summary: "Discreet, thorough representation for estates involving business interests, executive compensation, investments, and trusts."
 seo:
-  title: "High-Net-Worth Divorce Attorney | Lafayette, LA | Helen Popich Harris"
-  description: "Discreet representation in Louisiana divorces involving business valuations, executive and deferred compensation, stock options, trusts, and separate property claims."
+  title: "High-Net-Worth Divorce, Lafayette LA | Helen Popich Harris"
+  description: "Discreet representation in Louisiana divorces involving business valuations, executive compensation, stock options, trusts and separate property claims."
 focus:
   - "Business and professional-practice valuations"
   - "Executive and deferred compensation, bonuses, stock options, and restricted stock"

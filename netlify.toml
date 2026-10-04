@@ -1,0 +1,40 @@
+# Netlify configuration — Helen Popich Harris, APLC. See HANDOFF.md.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Canonical domain used for sitemap, canonical URLs and structured data.
+  SITE_URL = "https://harrisaplc.com"   # [[CONFIRM]] domain
+  # Review markers: leave unset to follow the CMS "Review mode" switch.
+  # Set to "false" to force them off regardless of the CMS setting.
+  # REVIEW_MODE = "false"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Fingerprinted build assets (images, scripts) — cache for a year.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Self-hosted fonts. If a font file ever changes, rename it.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-cache"

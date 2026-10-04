@@ -6,7 +6,7 @@ order: 1
 summary: "Strategic guidance through the Louisiana divorce process, from planning before filing to final judgment."
 seo:
   title: "Divorce Attorney in Lafayette, LA | Helen Popich Harris"
-  description: "Experienced, discreet divorce counsel in Lafayette, Louisiana — planning before filing, negotiated settlements, and litigation when necessary. Board Certified Family Law Specialist."
+  description: "Discreet divorce counsel in Lafayette, Louisiana: planning before filing, negotiated settlements, and litigation when necessary."
 focus:
   - "Planning and timing before a petition is filed"
   - "Protecting financial records and accounts early"

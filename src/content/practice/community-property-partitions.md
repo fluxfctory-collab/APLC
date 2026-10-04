@@ -5,8 +5,8 @@ short_title: "Community Property"
 order: 2
 summary: "Identifying, classifying, valuing, and dividing community assets and debts — including businesses, real estate, and reimbursement claims."
 seo:
-  title: "Community Property Partition Attorney | Lafayette, LA | Helen Popich Harris"
-  description: "Louisiana community property partitions involving businesses, professional practices, real estate, investments, and reimbursement claims. Lafayette family law attorney Helen Popich Harris."
+  title: "Community Property Attorney, Lafayette LA | Helen Popich Harris"
+  description: "Louisiana community property partitions involving businesses, professional practices, real estate, investments and reimbursement claims. Lafayette, LA."
 focus:
   - "Classification of community and separate property"
   - "Closely held businesses and professional practices"

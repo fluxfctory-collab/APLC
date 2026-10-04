@@ -5,7 +5,7 @@ short_title: "Retirement & QDROs"
 order: 5
 summary: "Dividing pensions, 401(k)s, IRAs, and other retirement assets — with orders drafted precisely to avoid costly mistakes."
 seo:
-  title: "QDRO & Retirement Division Attorney | Lafayette, LA | Helen Popich Harris"
+  title: "QDRO & Retirement Division, Lafayette LA | Helen Popich Harris"
   description: "Division of pensions, 401(k)s, IRAs, and other retirement benefits in Louisiana divorces, including Qualified Domestic Relations Orders (QDROs)."
 focus:
   - "Defined-benefit pensions and defined-contribution plans such as 401(k)s"
