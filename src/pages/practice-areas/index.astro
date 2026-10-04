@@ -1,0 +1,212 @@
+---
+/** Practice Areas — single page with anchored sections (sub-pages link from each). */
+import { getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Faq from '../../components/Faq.astro';
+import Arrow from '../../components/Arrow.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getPracticeAreas } from '../../lib/site';
+import { pad, md } from '../../lib/text';
+import { practiceOverviewSchema } from '../../lib/schema';
+
+const page = (await getEntry('practiceOverview', 'index'))!.data;
+const areas = await Promise.all(
+  (await getPracticeAreas()).map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+const schema = await practiceOverviewSchema();
+---
+
+<Base title={page.seo.title} description={page.seo.description} schema={schema}>
+  <PageHeader eyebrow={page.eyebrow} title={page.heading} intro={page.intro} crumbs={[{ name: 'Practice Areas', href: '/practice-areas/' }]} />
+
+  <div class="container areas">
+    <nav class="areas__index" aria-label="Practice areas on this page">
+      <p class="areas__index-title">On this page</p>
+      <ol role="list">
+        {
+          areas.map(({ entry }, i) => (
+            <li>
+              <a href={`#${entry.id}`}>
+                <span class="areas__index-num" aria-hidden="true">{pad(i + 1)}</span>
+                {entry.data.short_title}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href="#custody">
+            <span class="areas__index-num" aria-hidden="true">—</span>A note on custody
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="areas__main">
+      {
+        areas.map(({ entry, Content }, i) => (
+          <section class="area" id={entry.id} aria-labelledby={`${entry.id}-title`}>
+            <p class="area__num" aria-hidden="true">{pad(i + 1)}</p>
+            <h2 id={`${entry.id}-title`} class="title-sm area__title">{entry.data.title}</h2>
+            <p class="area__summary">{entry.data.summary}</p>
+            <div class="prose area__body">
+              <Content />
+            </div>
+            <Faq faqs={entry.data.faqs} />
+            <div class="area__actions">
+              <a class="text-link" href="/contact/#inquiry">Discuss your situation <Arrow /></a>
+              <a class="link small" href={`/practice-areas/${entry.id}/`}>
+                More about {entry.data.title}
+              </a>
+            </div>
+          </section>
+        ))
+      }
+
+      <section class="custody" id="custody" aria-labelledby="custody-title">
+        <h2 id="custody-title" class="custody__title">{page.custody.heading}</h2>
+        <div class="custody__body" set:html={md(page.custody.body)} />
+      </section>
+    </div>
+  </div>
+
+  <CtaBand heading={page.cta.heading} body={page.cta.body} buttonLabel={page.cta.button_label} />
+</Base>
+
+<style>
+  .areas {
+    display: grid;
+    gap: 2rem;
+    padding-block: var(--section-sm) var(--section);
+  }
+
+  @media (min-width: 64em) {
+    .areas {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: start;
+    }
+    .areas__index {
+      position: sticky;
+      top: calc(var(--header-h-condensed) + 2rem);
+    }
+  }
+
+  .areas__index {
+    border-top: 2px solid var(--brass);
+    padding-top: 1.25rem;
+  }
+
+  .areas__index-title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-text);
+    margin-bottom: 0.75rem;
+  }
+
+  .areas__index ol {
+    display: grid;
+  }
+
+  @media (min-width: 40em) and (max-width: 63.99em) {
+    .areas__index ol {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 2rem;
+    }
+  }
+
+  .areas__index a {
+    display: flex;
+    gap: 0.85rem;
+    align-items: baseline;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .areas__index a:hover {
+    color: var(--oxblood);
+  }
+
+  .areas__index-num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--brass-text);
+    min-width: 1.5rem;
+  }
+
+  .area {
+    padding-block: clamp(3rem, 2rem + 3vw, 5rem);
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: calc(var(--header-h-condensed) + 1rem);
+  }
+
+  .area:first-child {
+    padding-top: 0;
+  }
+
+  .area__num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+    line-height: 1;
+    color: var(--brass);
+    margin-bottom: 0.75rem;
+  }
+
+  .area__title {
+    max-width: 22ch;
+  }
+
+  .area__summary {
+    margin-top: 1rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.3rem, 1.15rem + 0.5vw, 1.55rem);
+    line-height: 1.4;
+    color: var(--slate);
+    max-width: 40rem;
+  }
+
+  .area__body {
+    margin-top: 1.75rem;
+  }
+
+  .area :global(.faq-block) {
+    margin-top: 2.5rem;
+    max-width: var(--measure);
+  }
+
+  .area__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: 2.25rem;
+  }
+
+  .custody {
+    margin-top: clamp(3rem, 2rem + 3vw, 5rem);
+    padding: clamp(1.75rem, 1rem + 2.5vw, 3rem);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--brass);
+    scroll-margin-top: calc(var(--header-h-condensed) + 1rem);
+    max-width: 48rem;
+  }
+
+  .custody__title {
+    font-size: var(--step-2);
+    font-style: italic;
+    margin-bottom: 0.85rem;
+  }
+
+  .custody__body {
+    color: var(--slate);
+  }
+</style>

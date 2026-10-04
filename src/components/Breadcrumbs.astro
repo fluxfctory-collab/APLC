@@ -1,0 +1,49 @@
+---
+/** Breadcrumb trail; the last item is the current page. */
+interface Props { items: { name: string; href: string }[] }
+const { items } = Astro.props;
+---
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol role="list">
+    <li><a href="/">Home</a></li>
+    {
+      items.map((item, i) => (
+        <li>
+          {i === items.length - 1 ? <span aria-current="page">{item.name}</span> : <a href={item.href}>{item.name}</a>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    margin-bottom: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    font-size: 0.8125rem;
+    color: var(--slate);
+  }
+  .crumbs li:not(:last-child)::after {
+    content: '/';
+    margin-inline: 0.65rem;
+    color: var(--brass);
+  }
+  .crumbs a {
+    color: var(--slate);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 0.2em;
+    padding-block: 0.6rem;
+  }
+  .crumbs a:hover {
+    color: var(--oxblood);
+    text-decoration-color: currentColor;
+  }
+  .crumbs [aria-current] {
+    color: var(--ink);
+  }
+</style>

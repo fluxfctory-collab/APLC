@@ -1,0 +1,180 @@
+---
+/** Individual practice-area page (local-search landing page). */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Faq from '../../components/Faq.astro';
+import Arrow from '../../components/Arrow.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getPracticeAreas } from '../../lib/site';
+import { pad } from '../../lib/text';
+import { practiceAreaSchema } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('practice');
+  return areas.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const all = await getPracticeAreas();
+const index = all.findIndex((a) => a.id === entry.id);
+const others = all.filter((a) => a.id !== entry.id);
+const schema = await practiceAreaSchema(entry.id);
+---
+
+<Base title={entry.data.seo.title} description={entry.data.seo.description} schema={schema}>
+  <PageHeader
+    eyebrow="Practice Areas"
+    num={pad(index + 1)}
+    title={entry.data.title}
+    intro={entry.data.summary}
+    crumbs={[
+      { name: 'Practice Areas', href: '/practice-areas/' },
+      { name: entry.data.title, href: `/practice-areas/${entry.id}/` },
+    ]}
+  />
+
+  <section class="section detail" aria-label="Overview">
+    <div class="container detail__grid">
+      <div class="detail__main">
+        <div class="prose detail__body">
+          <Content />
+        </div>
+        <Faq faqs={entry.data.faqs} headingLevel="h2" />
+        <a class="btn detail__cta" href="/contact/#inquiry">Schedule a consultation <Arrow /></a>
+      </div>
+
+      <aside class="detail__aside">
+        {
+          entry.data.focus.length > 0 && (
+            <div class="card focus">
+              <h2 class="focus__title">What Ms. Harris reviews</h2>
+              <ul role="list">
+                {entry.data.focus.map((f) => (
+                  <li>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        <nav class="related" aria-label="Other practice areas">
+          <h2 class="related__title">Other practice areas</h2>
+          <ul role="list">
+            {others.map((a) => (
+              <li>
+                <a href={`/practice-areas/${a.id}/`}>
+                  {a.data.title} <Arrow />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="link small related__all" href="/practice-areas/">All practice areas</a>
+        </nav>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand heading="Discuss your situation in confidence." body="A consultation is the best way to understand how Louisiana law applies to your circumstances." buttonLabel="Send an inquiry" />
+</Base>
+
+<style>
+  .detail__grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  @media (min-width: 64em) {
+    .detail__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: start;
+    }
+    .detail__aside {
+      position: sticky;
+      top: calc(var(--header-h-condensed) + 2rem);
+    }
+  }
+
+  .detail__body :global(p:first-of-type) {
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  .detail__main :global(.faq-block) {
+    margin-top: 3rem;
+    max-width: var(--measure);
+  }
+
+  .detail__cta {
+    margin-top: 2.5rem;
+  }
+
+  .detail__aside {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .focus__title,
+  .related__title {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-text);
+    margin-bottom: 1rem;
+  }
+
+  .focus li {
+    position: relative;
+    padding: 0.7rem 0 0.7rem 1.4rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .focus li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.3rem;
+    width: 0.6rem;
+    height: 1px;
+    background: var(--brass);
+  }
+
+  .related li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.8rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.3;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .related li a :global(.arrow) {
+    flex: none;
+    width: 1rem;
+    color: var(--brass-text);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .related li a:hover {
+    color: var(--oxblood);
+  }
+
+  .related li a:hover :global(.arrow) {
+    transform: translateX(3px);
+  }
+
+  .related__all {
+    display: inline-block;
+    margin-top: 1rem;
+  }
+</style>

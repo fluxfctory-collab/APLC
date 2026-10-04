@@ -1,0 +1,255 @@
+---
+/** Contact */
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import ContactForm from '../components/ContactForm.astro';
+import MapFacade from '../components/MapFacade.astro';
+import { getSettings, addressLines, telHref } from '../lib/site';
+import { contactSchema } from '../lib/schema';
+
+const page = (await getEntry('contact', 'contact'))!.data;
+const settings = await getSettings();
+const [line1, line2] = addressLines(settings);
+const schema = await contactSchema();
+---
+
+<Base title={page.seo.title} description={page.seo.description} schema={schema}>
+  <PageHeader eyebrow={page.eyebrow} title={page.heading} intro={page.intro} crumbs={[{ name: 'Contact', href: '/contact/' }]} />
+
+  <section class="section contact" aria-label="Contact details and inquiry form">
+    <div class="container contact__grid">
+      <div class="contact__details">
+        <h2 class="contact__heading">{page.details_heading}</h2>
+
+        <dl class="contact__list">
+          <div>
+            <dt>Address</dt>
+            <dd>
+              <address>{settings.firm_name}<br />{line1}<br />{line2}</address>
+            </dd>
+          </div>
+          <div>
+            <dt>Telephone</dt>
+            <dd><a class="contact__phone" href={telHref(settings)}>{settings.phone_display}</a></dd>
+          </div>
+          <div>
+            <dt>Fax</dt>
+            <dd>{settings.fax_display}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a class="link" href={`mailto:${settings.email}`}>{settings.email}</a></dd>
+          </div>
+          <div>
+            <dt>Office hours</dt>
+            <dd>
+              {settings.hours.map((h) => <span class="contact__hours">{h.label}<br />{h.time}</span>)}
+              {settings.hours_note && <span class="contact__note">{settings.hours_note}</span>}
+            </dd>
+          </div>
+          {
+            page.parking_note && (
+              <div>
+                <dt>Visiting</dt>
+                <dd>{page.parking_note}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <MapFacade />
+
+        <figure class="contact__portrait">
+          <div class="contact__portrait-img">
+            <Photo src={page.portrait.src} alt={page.portrait.alt} sizes="7rem" widths={[240]} />
+          </div>
+          <figcaption>{page.portrait.caption}</figcaption>
+        </figure>
+      </div>
+
+      <div class="contact__form">
+        <ContactForm form={page.form} />
+        <p class="contact__disclaimer">{settings.footer_disclaimer} <a class="link" href="/disclaimer/">Full disclaimer</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  {
+    page.band.show && (
+      <section class="oaks on-ink" aria-label="Acadiana">
+        <Photo src={page.band.image.src} alt={page.band.image.alt} sizes="100vw" class="oaks__img" pictureClass="oaks__picture" />
+        <div class="oaks__overlay" />
+        <div class="container oaks__inner">
+          <p class="oaks__caption">{page.band.caption}</p>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .contact__grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  @media (min-width: 64em) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: start;
+    }
+  }
+
+  .contact__heading {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--brass-text);
+    margin-bottom: 1.25rem;
+  }
+
+  .contact__list {
+    border-top: 1px solid var(--line-strong);
+    margin-bottom: 2.5rem;
+  }
+
+  .contact__list > div {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .contact__list dt {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--slate);
+    padding-top: 0.2rem;
+  }
+
+  .contact__list address {
+    font-style: normal;
+  }
+
+  .contact__phone {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--ink);
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+  }
+
+  .contact__phone:hover {
+    color: var(--oxblood);
+  }
+
+  .contact__hours {
+    display: block;
+  }
+
+  .contact__note {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--slate);
+  }
+
+  .contact__portrait {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .contact__portrait-img {
+    width: 5.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: none;
+    box-shadow: 0 0 0 1px var(--brass), 0 0 0 5px var(--ivory), 0 0 0 6px var(--brass-line);
+  }
+
+  .contact__portrait-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 22%;
+  }
+
+  .contact__portrait figcaption {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.4rem;
+    line-height: 1.3;
+  }
+
+  .contact__disclaimer {
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--slate);
+  }
+
+  /* ---- Live-oak band ---- */
+  .oaks {
+    position: relative;
+    min-height: clamp(16rem, 30vw, 26rem);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .oaks :global(.oaks__picture) {
+    position: absolute;
+    inset: 0;
+  }
+
+  .oaks :global(.oaks__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+    filter: grayscale(0.35) contrast(0.95);
+  }
+
+  .oaks__overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(27 30 36 / 0.55) 0%, rgb(27 30 36 / 0.82) 100%),
+      rgb(27 30 36 / 0.15);
+  }
+
+  .oaks__inner {
+    position: relative;
+    padding-block: 2.5rem;
+  }
+
+  .oaks__caption {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2.1rem);
+    color: var(--on-ink);
+  }
+
+  .oaks__caption::before {
+    content: '';
+    width: 2.5rem;
+    height: 1px;
+    background: var(--brass);
+    flex: none;
+  }
+</style>

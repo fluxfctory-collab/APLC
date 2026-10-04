@@ -1,0 +1,223 @@
+---
+/**
+ * Inquiry form — Netlify Forms.
+ *  • Works without JavaScript (plain POST; Netlify redirects to /thank-you/).
+ *  • With JavaScript: inline validation, clear messages, focus moves to the
+ *    first problem. Errors are announced via aria-describedby/aria-invalid.
+ *  • Spam: honeypot field + Netlify's built-in filtering (no CAPTCHA).
+ * The form name "inquiry" must stay the same for Netlify to keep routing it.
+ */
+import Arrow from './Arrow.astro';
+
+interface Props {
+  form: {
+    heading: string;
+    intro: string;
+    matter_types: string[];
+    matter_help: string;
+    other_party_help: string;
+    message_help: string;
+    consent_label: string;
+    submit_label: string;
+  };
+}
+const { form } = Astro.props;
+const errorIcon =
+  '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.25"/><path d="M8 4.5v4.5M8 11v.5" stroke="currentColor" stroke-width="1.5"/></svg>';
+---
+
+<div class="inquiry" id="inquiry">
+  <h2 class="inquiry__title">{form.heading}</h2>
+  <p class="inquiry__intro">{form.intro}</p>
+
+  <form
+    class="inquiry__form"
+    name="inquiry"
+    method="POST"
+    action="/thank-you/"
+    data-netlify="true"
+    netlify-honeypot="company"
+    novalidate
+    data-inquiry-form
+  >
+    <input type="hidden" name="form-name" value="inquiry" />
+    <p class="inquiry__hp">
+      <label>Leave this field empty <input name="company" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <div class="field">
+      <label class="field__label" for="f-name">Full name<span class="field__req" aria-hidden="true">*</span></label>
+      <input class="input" id="f-name" name="name" type="text" autocomplete="name" required aria-required="true" maxlength="120" />
+      <p class="field__error" id="f-name-error" data-error><Fragment set:html={errorIcon} /><span>Please enter your name.</span></p>
+    </div>
+
+    <div class="inquiry__pair">
+      <div class="field">
+        <label class="field__label" for="f-phone">Phone<span class="field__req" aria-hidden="true">*</span></label>
+        <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required aria-required="true" data-validate="phone" maxlength="30" />
+        <p class="field__error" id="f-phone-error" data-error><Fragment set:html={errorIcon} /><span>Please enter a phone number, including area code.</span></p>
+      </div>
+      <div class="field">
+        <label class="field__label" for="f-email">Email<span class="field__req" aria-hidden="true">*</span></label>
+        <input class="input" id="f-email" name="email" type="email" autocomplete="email" required aria-required="true" maxlength="160" />
+        <p class="field__error" id="f-email-error" data-error><Fragment set:html={errorIcon} /><span>Please enter a valid email address.</span></p>
+      </div>
+    </div>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset__legend">Preferred contact method <span class="field__opt">(optional)</span></legend>
+      <div class="choice-row">
+        <label class="choice"><input type="radio" name="contact_method" value="Phone" /> Phone</label>
+        <label class="choice"><input type="radio" name="contact_method" value="Email" /> Email</label>
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label class="field__label" for="f-matter">Matter type <span class="field__opt">(optional)</span></label>
+      <select class="select" id="f-matter" name="matter_type" aria-describedby="f-matter-help">
+        <option value="">Select…</option>
+        {form.matter_types.map((t) => <option value={t}>{t}</option>)}
+      </select>
+      <p class="field__help" id="f-matter-help">{form.matter_help}</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="f-other">Spouse or opposing party's name <span class="field__opt">(optional)</span></label>
+      <input class="input" id="f-other" name="other_party" type="text" autocomplete="off" aria-describedby="f-other-help" maxlength="120" />
+      <p class="field__help" id="f-other-help">{form.other_party_help}</p>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="f-message">Brief message <span class="field__opt">(optional)</span></label>
+      <textarea class="textarea" id="f-message" name="message" rows="5" maxlength="1500" aria-describedby="f-message-help"></textarea>
+      <p class="field__help" id="f-message-help">{form.message_help}</p>
+    </div>
+
+    <div class="field">
+      <label class="consent">
+        <input type="checkbox" name="consent" value="Acknowledged" required aria-required="true" id="f-consent" />
+        <span>{form.consent_label} <a class="link" href="/disclaimer/">Read the disclaimer</a>.<span class="field__req" aria-hidden="true">*</span></span>
+      </label>
+      <p class="field__error" id="f-consent-error" data-error><Fragment set:html={errorIcon} /><span>Please confirm that you have read and understand this statement.</span></p>
+    </div>
+
+    <div class="inquiry__submit">
+      <button class="btn" type="submit">{form.submit_label} <Arrow /></button>
+      <p class="field__help">We respond by phone or email. Your information is used only to reply to you.</p>
+    </div>
+  </form>
+</div>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-inquiry-form]');
+  if (form) {
+    const fields = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], [data-validate]'));
+    let attempted = false;
+
+    const valid = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      if (el instanceof HTMLInputElement && el.type === 'checkbox') return el.checked;
+      const v = el.value.trim();
+      if (el.required && !v) return false;
+      if (el.dataset.validate === 'phone') return v.replace(/\D/g, '').length >= 10;
+      if (el instanceof HTMLInputElement && el.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+      return true;
+    };
+
+    // Error text is linked via aria-describedby only while the field is invalid,
+    // so screen readers never announce an error that isn't there.
+    const show = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      const ok = valid(el);
+      const errId = `${el.id}-error`;
+      const ids = (el.getAttribute('aria-describedby') ?? '').split(' ').filter((id) => id && id !== errId);
+      if (!ok) ids.unshift(errId);
+      if (ids.length) el.setAttribute('aria-describedby', ids.join(' '));
+      else el.removeAttribute('aria-describedby');
+      el.closest('.field')?.classList.toggle('has-error', !ok);
+      el.setAttribute('aria-invalid', String(!ok));
+      return ok;
+    };
+
+    fields.forEach((el) => {
+      el.removeAttribute('aria-invalid');
+      const evt = el instanceof HTMLInputElement && el.type === 'checkbox' ? 'change' : 'blur';
+      el.addEventListener(evt, () => attempted && show(el));
+      el.addEventListener('input', () => attempted && el.closest('.field')?.classList.contains('has-error') && show(el));
+    });
+
+    form.addEventListener('submit', (e) => {
+      attempted = true;
+      const invalid = fields.filter((el) => !show(el));
+      if (invalid.length) {
+        e.preventDefault();
+        invalid[0].focus();
+        return;
+      }
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) {
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+      }
+    });
+  }
+</script>
+
+<style>
+  .inquiry {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--brass);
+    padding: clamp(1.5rem, 0.75rem + 3vw, 3rem);
+    scroll-margin-top: calc(var(--header-h-condensed) + 1rem);
+  }
+
+  .inquiry__title {
+    font-size: var(--step-3);
+    line-height: 1.15;
+  }
+
+  .inquiry__intro {
+    margin-top: 0.75rem;
+    font-size: var(--step--1);
+    color: var(--slate);
+  }
+
+  .inquiry__form {
+    display: grid;
+    gap: 1.6rem;
+    margin-top: 2rem;
+  }
+
+  .inquiry__pair {
+    display: grid;
+    gap: 1.6rem;
+  }
+
+  @media (min-width: 40em) {
+    .inquiry__pair {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  .inquiry__hp {
+    display: none;
+  }
+
+  .inquiry__submit {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    padding-top: 0.5rem;
+  }
+
+  .inquiry__submit .btn[disabled] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+
+  @media (max-width: 29.99em) {
+    .inquiry__submit .btn {
+      width: 100%;
+    }
+  }
+</style>

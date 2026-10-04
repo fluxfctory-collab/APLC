@@ -1,0 +1,37 @@
+---
+/** Common-questions list as native <details> disclosures. */
+import { md } from '../lib/text';
+interface Props { faqs: { question: string; answer: string }[]; heading?: string; headingLevel?: 'h2' | 'h3' }
+const { faqs, heading = 'Common questions', headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+{
+  faqs.length > 0 && (
+    <div class="faq-block">
+      <H class="faq-block__heading">{heading}</H>
+      <div class="faq">
+        {faqs.map((f) => (
+          <details>
+            <summary>
+              {f.question}
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <div class="faq__answer" set:html={md(f.answer)} />
+          </details>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .faq-block__heading {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--brass-text);
+    margin-bottom: 1rem;
+  }
+</style>

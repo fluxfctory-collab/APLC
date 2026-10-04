@@ -1,0 +1,95 @@
+---
+/**
+ * Privacy-friendly map: nothing loads from Google until the visitor asks.
+ * Keeps Contact fast and free of third-party cookies by default.
+ */
+import Monogram from './Monogram.astro';
+import { getSettings, addressLines } from '../lib/site';
+
+const settings = await getSettings();
+const [line1, line2] = addressLines(settings);
+---
+<div class="map" data-map={settings.map_embed_url}>
+  <div class="map__placeholder" data-map-placeholder>
+    <Monogram class="map__mark" />
+    <p class="map__address">{line1}<br />{line2}</p>
+    <div class="map__actions">
+      <button type="button" class="btn btn--sm btn--ghost" data-map-load>Show map</button>
+      <a class="link small" href={settings.maps_url} target="_blank" rel="noopener">Open in Google Maps<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+    <p class="map__note">Showing the map loads content from Google.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
+    map.querySelector('[data-map-load]')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = map.dataset.map!;
+      iframe.title = 'Map showing the office location in Lafayette, Louisiana';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.setAttribute('allowfullscreen', '');
+      map.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>
+
+<style>
+  .map {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .map :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .map__placeholder {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 39px, rgb(168 135 90 / 0.12) 39px 40px),
+      repeating-linear-gradient(90deg, transparent 0 39px, rgb(168 135 90 / 0.12) 39px 40px),
+      var(--paper);
+  }
+
+  .map__placeholder :global(.map__mark) {
+    width: 2.5rem;
+    height: auto;
+    color: var(--brass);
+  }
+
+  .map__address {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    line-height: 1.35;
+    font-variant-numeric: lining-nums;
+  }
+
+  .map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .map__note {
+    font-size: 0.75rem;
+    color: var(--slate);
+  }
+</style>

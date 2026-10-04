@@ -1,0 +1,400 @@
+---
+/** About Helen */
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import SectionMarker from '../components/SectionMarker.astro';
+import Badge from '../components/Badge.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getCredentials } from '../lib/site';
+import { pad, reg } from '../lib/text';
+import { aboutSchema } from '../lib/schema';
+
+const entry = (await getEntry('about', 'about'))!;
+const about = entry.data;
+const { Content } = await render(entry);
+const credentials = await getCredentials();
+const schema = await aboutSchema();
+---
+
+<Base title={about.seo.title} description={about.seo.description} schema={schema}>
+  <header class="about-hero">
+    <div class="container about-hero__grid">
+      <div class="about-hero__copy">
+        <Breadcrumbs items={[{ name: 'About', href: '/about/' }]} />
+        <p class="eyebrow eyebrow--ruled">{about.hero.eyebrow}</p>
+        <h1 class="display about-hero__name">{about.hero.name}</h1>
+        <p class="about-hero__title">{about.hero.title_line}</p>
+        <p class="lead about-hero__statement">{about.hero.statement}</p>
+      </div>
+      <figure class="about-hero__figure">
+        <div class="frame about-hero__frame">
+          <Photo src={about.hero.image.src} alt={about.hero.image.alt} priority sizes="(min-width: 64em) 34vw, (min-width: 40em) 60vw, 100vw" />
+        </div>
+      </figure>
+    </div>
+  </header>
+
+  <section class="section bio" aria-labelledby="bio-title">
+    <div class="container bio__grid">
+      <div class="bio__main">
+        <SectionMarker num="01" label={about.bio_heading} />
+        <h2 id="bio-title" class="sr-only">{about.bio_heading}</h2>
+        <div class="prose dropcap bio__prose">
+          <Content />
+        </div>
+      </div>
+
+      <aside class="facts" aria-label="At a glance">
+        <div class="facts__panel">
+          <p class="facts__title">At a glance</p>
+          {
+            about.facts.map((group) => (
+              <div class="facts__group">
+                <h3 class="facts__heading">{group.heading}</h3>
+                <ul role="list">
+                  {group.items.map((item) => (
+                    <li set:html={reg(item)} />
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--paper speaking" aria-labelledby="speaking-title">
+    <div class="container speaking__grid">
+      {
+        about.secondary_image && (
+          <figure class="speaking__figure" data-reveal>
+            <div class="frame frame--left speaking__frame">
+              <Photo src={about.secondary_image.src} alt={about.secondary_image.alt} sizes="(min-width: 64em) 30vw, 80vw" />
+            </div>
+          </figure>
+        )
+      }
+      <div class="speaking__copy">
+        <SectionMarker num="02" label="Teaching" />
+        <h2 id="speaking-title" class="title" data-reveal>{about.speaking.heading}</h2>
+        <p class="speaking__intro" data-reveal>{about.speaking.intro}</p>
+        <ol role="list" class="speaking__list">
+          {
+            about.speaking.items.map((item, i) => (
+              <li data-reveal style={`--reveal-delay:${i * 50}ms`}>
+                <span class="speaking__num" aria-hidden="true">{pad(i + 1)}</span>
+                <span class="speaking__topic">{item.topic}</span>
+                {item.venue && <span class="speaking__venue">{item.venue}</span>}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--ink creds" aria-labelledby="creds-title">
+    <div class="container">
+      <div class="creds__head">
+        <div>
+          <SectionMarker num="03" label="Recognition" />
+          <h2 id="creds-title" class="title">{about.credentials.heading}</h2>
+        </div>
+        <p class="creds__intro">{about.credentials.intro}</p>
+      </div>
+      <ul role="list" class="creds__grid">
+        {
+          credentials.map((c, i) => (
+            <li class="creds__item" data-reveal style={`--reveal-delay:${i * 50}ms`}>
+              {c.data.badge_image || c.data.badge_embed ? (
+                <div class="creds__badge-wrap">
+                  <Badge credential={c} />
+                  <p class="creds__statement" set:html={reg(c.data.statement)} />
+                </div>
+              ) : (
+                <Badge credential={c} fallback />
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand heading={about.cta.heading} body={about.cta.body} buttonLabel={about.cta.button_label} />
+</Base>
+
+<style>
+  /* ---- Hero ---- */
+  .about-hero {
+    padding-top: clamp(1.5rem, 1rem + 3vw, 3.5rem);
+    padding-bottom: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .about-hero__grid {
+    display: grid;
+    gap: 3rem;
+  }
+
+  .about-hero__name {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 10ch;
+  }
+
+  .about-hero__title {
+    margin-top: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+
+  .about-hero__statement {
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
+    padding-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+    border-top: 1px solid var(--line-strong);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.4rem, 1.15rem + 1vw, 1.95rem);
+    line-height: 1.35;
+    color: var(--ink);
+    max-width: 30ch;
+  }
+
+  .about-hero__figure {
+    max-width: 30rem;
+    padding-right: clamp(10px, 1.2vw, 18px);
+  }
+
+  .about-hero__frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .about-hero__frame :global(picture),
+  .about-hero__frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+
+  @media (min-width: 64em) {
+    .about-hero__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: end;
+    }
+    .about-hero__figure {
+      max-width: none;
+    }
+  }
+
+  /* ---- Biography + facts ---- */
+  .bio__grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .bio__prose {
+    font-size: var(--step-0);
+  }
+
+  .bio__prose :global(p:first-of-type) {
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  .bio__prose :global(h2) {
+    font-size: var(--step-3);
+  }
+
+  @media (min-width: 64em) {
+    .bio__grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: start;
+    }
+    .facts {
+      position: sticky;
+      top: calc(var(--header-h-condensed) + 2rem);
+    }
+  }
+
+  .facts__panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-top: 2px solid var(--brass);
+    padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  }
+
+  .facts__title {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+
+  .facts__group {
+    padding-block: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .facts__heading {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-text);
+    margin-bottom: 0.6rem;
+  }
+
+  .facts__group li {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .facts__group li + li {
+    margin-top: 0.5rem;
+  }
+
+  /* ---- Speaking ---- */
+  .speaking {
+    border-top: 1px solid var(--line);
+  }
+
+  .speaking__grid {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .speaking__figure {
+    max-width: 26rem;
+    padding-left: clamp(10px, 1.2vw, 18px);
+  }
+
+  .speaking__frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .speaking__frame :global(picture),
+  .speaking__frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .speaking__intro {
+    margin-top: 1.25rem;
+    color: var(--slate);
+    max-width: 40rem;
+  }
+
+  .speaking__list {
+    margin-top: 2rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .speaking__list li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    column-gap: 1rem;
+    padding-block: 1.05rem;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .speaking__num {
+    grid-row: span 2;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--brass-text);
+    padding-top: 0.15rem;
+  }
+
+  .speaking__topic {
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.4rem);
+    line-height: 1.3;
+  }
+
+  .speaking__venue {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--slate);
+  }
+
+  @media (min-width: 64em) {
+    .speaking__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+      align-items: center;
+    }
+    .speaking__figure {
+      max-width: none;
+    }
+  }
+
+  /* ---- Credentials grid ---- */
+  .creds__head {
+    display: grid;
+    gap: 1.25rem 4rem;
+    margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  .creds__intro {
+    color: var(--on-ink-muted);
+    max-width: 30rem;
+  }
+
+  @media (min-width: 64em) {
+    .creds__head {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: end;
+    }
+  }
+
+  .creds__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: 1.25rem;
+  }
+
+  .creds__item,
+  .creds__item :global(.badge-fallback) {
+    height: 100%;
+  }
+
+  .creds__item :global(.badge-fallback__title) {
+    color: var(--on-ink);
+    font-size: 1.35rem;
+  }
+
+  .creds__badge-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--brass-line);
+    border-top: 2px solid var(--brass);
+  }
+
+  .creds__badge-wrap :global(.plate) {
+    align-self: flex-start;
+  }
+
+  .creds__statement {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: var(--on-ink);
+  }
+</style>

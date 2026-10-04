@@ -1,0 +1,82 @@
+---
+/** Centred, quiet layout for Thank-you and 404 pages (both noindex). */
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Seal from './Seal.astro';
+import Arrow from './Arrow.astro';
+import { NAV, getSettings, telHref } from '../lib/site';
+
+interface Props { id: 'thank-you' | 'not-found' }
+const entry = (await getEntry('utility', Astro.props.id))!;
+const { Content } = await render(entry);
+const settings = await getSettings();
+---
+<Base title={entry.data.seo.title} description={entry.data.seo.description} noindex>
+  <section class="section utility">
+    <div class="container utility__inner">
+      <Seal class="utility__seal" decorative />
+      <p class="eyebrow">{entry.data.eyebrow}</p>
+      <h1 class="display utility__title">{entry.data.heading}</h1>
+      <div class="prose utility__body"><Content /></div>
+      <p class="utility__phone">
+        <span>Telephone</span>
+        <a href={telHref(settings)}>{settings.phone_display}</a>
+      </p>
+      <nav class="utility__nav" aria-label="Main sections">
+        <a class="text-link" href="/">Home <Arrow /></a>
+        {NAV.map((n) => <a class="text-link" href={n.href}>{n.label} <Arrow /></a>)}
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .utility__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 46rem;
+  }
+  .utility :global(.utility__seal) {
+    width: 6rem;
+    height: auto;
+    color: var(--brass);
+    margin-bottom: 2rem;
+  }
+  .utility__title {
+    margin-top: 1.25rem;
+  }
+  .utility__body {
+    margin-top: 1.5rem;
+    color: var(--slate);
+    font-size: var(--step-1);
+  }
+  .utility__phone {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 2rem;
+  }
+  .utility__phone span {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass-text);
+  }
+  .utility__phone a {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+  }
+  .utility__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 2rem;
+    margin-top: 3rem;
+  }
+</style>

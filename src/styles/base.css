@@ -376,3 +376,8 @@ sup.reg {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Consistent lining figures for every numbered element (01, 02 …) */
+[class*='__num'] {
+  font-variant-numeric: lining-nums;
+}

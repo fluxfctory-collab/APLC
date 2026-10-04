@@ -1,0 +1,53 @@
+---
+/** Inner-page header: eyebrow, serif title, optional intro and breadcrumbs. */
+import Breadcrumbs from './Breadcrumbs.astro';
+import { inline } from '../lib/text';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  crumbs?: { name: string; href: string }[];
+  num?: string;
+}
+const { eyebrow, title, intro, crumbs, num } = Astro.props;
+---
+<header class="page-header">
+  <div class="container">
+    {crumbs && <Breadcrumbs items={crumbs} />}
+    <p class="eyebrow eyebrow--ruled page-header__eyebrow">{num && <span class="page-header__num">{num}</span>}{eyebrow}</p>
+    <h1 class="display page-header__title" set:html={inline(title)} />
+    {intro && <p class="lead page-header__intro">{intro}</p>}
+    <slot />
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding-top: clamp(1.5rem, 1rem + 3vw, 4rem);
+    padding-bottom: clamp(3rem, 2rem + 4vw, 5.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .page-header__eyebrow {
+    margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+  }
+
+  .page-header__num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    letter-spacing: 0;
+    text-transform: none;
+    margin-right: 0.25rem;
+  }
+
+  .page-header__title {
+    max-width: 18ch;
+  }
+
+  .page-header__intro {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 2rem);
+    max-width: 42rem;
+  }
+</style>
