@@ -14,7 +14,7 @@ const settings = await getSettings();
 <Base title={entry.data.seo.title} description={entry.data.seo.description} noindex>
   <section class="section utility">
     <div class="container utility__inner">
-      <Seal class="utility__seal" decorative />
+      <Seal variant="brass" class="utility__seal" decorative size={96} eager />
       <p class="eyebrow">{entry.data.eyebrow}</p>
       <h1 class="display utility__title">{entry.data.heading}</h1>
       <div class="prose utility__body"><Content /></div>

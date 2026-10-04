@@ -1,0 +1,12 @@
+page | perf | a11y | bp | seo | FCP | LCP | CLS | TBT | weight
+about-desktop | 100 | 100 | 100 | 100 | 0.33 s | 0.37 s | 0.001 | 0 ms | 111 KB
+about-mobile | 100 | 100 | 100 | 100 | 1.20 s | 1.65 s | 0.000 | 0 ms | 127 KB
+contact-desktop | 100 | 100 | 100 | 100 | 0.24 s | 0.36 s | 0.001 | 0 ms | 102 KB
+contact-mobile | 100 | 100 | 100 | 100 | 0.90 s | 1.43 s | 0.002 | 0 ms | 102 KB
+home-desktop | 100 | 100 | 100 | 100 | 0.25 s | 0.41 s | 0.003 | 0 ms | 159 KB
+home-mobile | 100 | 100 | 100 | 100 | 0.91 s | 1.88 s | 0.000 | 0 ms | 173 KB
+practice-areas-desktop | 100 | 100 | 100 | 100 | 0.24 s | 0.36 s | 0.001 | 0 ms | 95 KB
+practice-areas-mobile | 100 | 100 | 100 | 100 | 0.90 s | 1.35 s | 0.000 | 0 ms | 95 KB
+practice-areas_spousal-support-desktop | 100 | 100 | 100 | 100 | 0.28 s | 0.32 s | 0.001 | 0 ms | 90 KB
+practice-areas_spousal-support-mobile | 100 | 100 | 100 | 100 | 1.05 s | 1.20 s | 0.000 | 0 ms | 90 KB
+lighthouse 13.5.0

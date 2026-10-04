@@ -8,9 +8,9 @@ import Seal from '../Seal.astro';
 interface Props { quote: { text: string; attribution: string } }
 const { quote } = Astro.props;
 ---
-<section class="section quote" aria-label="Philosophy">
+<section class="section quote defer-render" aria-label="Philosophy">
   <div class="quote__watermark" aria-hidden="true">
-    <Seal decorative class="quote__seal" />
+    <Seal variant="ink" decorative class="quote__seal" size={1000} />
   </div>
   <div class="container">
     <figure class="quote__figure" data-reveal>

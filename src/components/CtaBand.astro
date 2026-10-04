@@ -14,7 +14,7 @@ interface Props {
 const { heading, body = '', buttonLabel, eyebrow = 'Consultation' } = Astro.props;
 const settings = await getSettings();
 ---
-<section class="cta-band on-ink" aria-labelledby="cta-band-title">
+<section class="cta-band on-ink defer-render" aria-labelledby="cta-band-title">
   <div class="container container--wide">
     <div class="cta-band__frame">
       <Monogram class="cta-band__mark" />

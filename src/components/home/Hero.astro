@@ -172,18 +172,19 @@ const creds = hero.credential_line.split('·').map((s) => s.trim());
       column-gap: clamp(3rem, 1rem + 5vw, 7rem);
     }
 
+    /* Sized from the viewport height (so the credentials band peeks above the
+       fold) but never wider than its column. */
     .hero__figure {
+      --hero-h: clamp(26rem, calc(100svh - var(--header-h) - 14rem), 44rem);
       order: 0;
-      display: grid;
-      justify-content: end;
+      justify-self: end;
+      width: min(100%, calc(var(--hero-h) * 0.8 + clamp(10px, 1.2vw, 18px)));
       padding-right: clamp(10px, 1.2vw, 18px);
     }
 
-    /* Sized from the viewport height so the credentials band peeks above the fold. */
     .hero__frame {
       aspect-ratio: 4 / 5;
-      width: auto;
-      height: clamp(26rem, calc(100svh - var(--header-h) - 14rem), 44rem);
+      width: 100%;
     }
 
     .hero__caption {

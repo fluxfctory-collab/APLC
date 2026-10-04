@@ -15,7 +15,7 @@ const [line1, line2] = addressLines(settings);
 const schema = await contactSchema();
 ---
 
-<Base title={page.seo.title} description={page.seo.description} schema={schema}>
+<Base title={page.seo.title} description={page.seo.description} schema={schema} preloadItalic={page.heading.includes('*')}>
   <PageHeader eyebrow={page.eyebrow} title={page.heading} intro={page.intro} crumbs={[{ name: 'Contact', href: '/contact/' }]} />
 
   <section class="section contact" aria-label="Contact details and inquiry form">
@@ -140,7 +140,7 @@ const schema = await contactSchema();
   .contact__phone {
     font-family: var(--font-serif);
     font-size: 1.6rem;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.1;
     color: var(--ink);
     text-decoration: none;

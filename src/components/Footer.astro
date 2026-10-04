@@ -17,11 +17,11 @@ const year = new Date().getFullYear();
 const [line1, line2] = addressLines(settings);
 ---
 
-<footer class="site-footer on-ink" id="site-footer">
+<footer class="site-footer on-ink defer-render" id="site-footer">
   <div class="container container--wide">
     <div class="footer-top">
       <div class="footer-brand">
-        <Seal class="footer-seal" label="Seal of Helen Popich Harris, Board Certified Family Law Specialist" />
+        <Seal variant="brass" class="footer-seal" size={112} />
         <div>
           <p class="footer-firm">{settings.firm_name}</p>
           <p class="footer-sub">{settings.attorney_name}, {settings.attorney_title}</p>

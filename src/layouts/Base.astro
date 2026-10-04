@@ -47,8 +47,9 @@ const cleanDescription = stripMarkers(description);
     <meta name="theme-color" content="#f7f3ec" />
     <meta name="format-detection" content="telephone=no" />
 
+    <!-- Display serif only: body text has a metric-matched fallback, and CSS is
+         inlined so the body font is discovered immediately anyway. -->
     <link rel="preload" href="/fonts/cormorant-garamond-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/source-sans-3-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     {preloadItalic && <link rel="preload" href="/fonts/cormorant-garamond-latin-500-italic.woff2" as="font" type="font/woff2" crossorigin />}
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />

@@ -17,7 +17,7 @@ interface Props {
   pictureClass?: string;
   widths?: number[];
 }
-const { src, alt, sizes, priority = false, class: cls, pictureClass, widths = [480, 768, 1200, 1600, 2000] } = Astro.props;
+const { src, alt, sizes, priority = false, class: cls, pictureClass, widths = [480, 640, 768, 1200, 1600, 2000] } = Astro.props;
 const image = requireImage(src, alt || 'decorative image');
 const usable = widths.filter((w) => w < image.width);
 usable.push(image.width);
@@ -29,9 +29,9 @@ usable.push(image.width);
   sizes={sizes}
   formats={['avif', 'webp']}
   fallbackFormat="jpg"
-  quality={priority ? 72 : 68}
+  quality={priority ? 56 : 64}
   loading={priority ? 'eager' : 'lazy'}
-  decoding={priority ? 'sync' : 'async'}
+  decoding="async"
   fetchpriority={priority ? 'high' : 'auto'}
   class={cls}
   pictureAttributes={{ class: pictureClass }}

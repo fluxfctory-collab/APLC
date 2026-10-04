@@ -27,7 +27,12 @@ facts:
   - heading: "Professional Memberships"
     items:
       - "Fellow, American Academy of Matrimonial Lawyers"
-      - "[[CONFIRM: other memberships — e.g. Lafayette Bar Association, LSBA Family Law Section]]"
+      - "Lafayette Bar Association, Paula K. Woodruff Family Law Section — President, 2015; Secretary/Treasurer, 2014 [[CONFIRM: listed on her public AAML profile]]"
+      - "Louisiana State Bar Association, Family Law Section [[CONFIRM: listed on her public AAML profile]]"
+      - "American Bar Association, Family Law Section [[CONFIRM: listed on her public AAML profile]]"
+  - heading: "Service"
+    items:
+      - "Louisiana Board of Legal Specialization, Family Law Advisory Commission [[CONFIRM: roles and years — her AAML profile mentions service as a specialization grader and as secretary]]"
   - heading: "Recognition"
     items:
       - "Selected to Louisiana Super Lawyers® for 2022, 2025 and 2026"

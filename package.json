@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Website for Helen Popich Harris, APLC \u2014 family law, Lafayette, Louisiana",
+  "description": "Website for Helen Popich Harris, APLC — family law, Lafayette, Louisiana",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -22,11 +22,13 @@
     "sharp": "^0.35.5"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@fontsource-variable/cormorant-garamond": "^5.3.0",
     "@fontsource-variable/source-sans-3": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/source-sans-3": "^5.3.0",
     "opentype.js": "^2.0.0",
-    "playwright-core": "^1.56.1"
+    "playwright-core": "^1.56.1",
+    "typescript": "^6.0.3"
   }
 }

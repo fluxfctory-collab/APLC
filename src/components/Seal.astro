@@ -1,23 +1,50 @@
 ---
 /**
- * The redrawn seal, inlined so it inherits colour and stays crisp.
- * variant: color (burgundy/gold) | current (single colour = CSS `color`)
+ * The redrawn seal.
+ *  • Default: a cacheable <img> of /brand/seal-{variant}.svg (one download,
+ *    reused on every page — keeps each page's HTML light).
+ *  • inline: the SVG is written into the page so it can inherit CSS colour
+ *    (variant "current"); use sparingly.
  */
-import color from '../assets/brand/seal-color.svg?raw';
 import current from '../assets/brand/seal-current.svg?raw';
 
 interface Props {
-  variant?: 'color' | 'current';
+  variant?: 'color' | 'brass' | 'ink' | 'current';
   class?: string;
   decorative?: boolean;
   label?: string;
+  size?: number;
+  eager?: boolean;
 }
-const { variant = 'current', class: cls = '', decorative = false, label = 'Seal of Helen Popich Harris, Board Certified Family Law Specialist' } = Astro.props;
-const raw = variant === 'color' ? color : current;
-const a11y = decorative ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${label}"`;
-const svg = raw
-  .replace(/ role="img" aria-labelledby="t d"/, '')
-  .replace(/<title[^>]*>.*?<\/title><desc[^>]*>.*?<\/desc>/, '')
-  .replace('<svg ', `<svg class="${cls}" ${a11y} `);
+const {
+  variant = 'brass',
+  class: cls = '',
+  decorative = false,
+  label = 'Seal of Helen Popich Harris, Board Certified Family Law Specialist',
+  size = 120,
+  eager = false,
+} = Astro.props;
+
+const inlineSvg =
+  variant === 'current'
+    ? current
+        .replace(/ role="img" aria-labelledby="t d"/, '')
+        .replace(/<title[^>]*>.*?<\/title><desc[^>]*>.*?<\/desc>/, '')
+        .replace('<svg ', `<svg class="${cls}" ${decorative ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${label}"`} `)
+    : null;
 ---
-<Fragment set:html={svg} />
+{
+  inlineSvg ? (
+    <Fragment set:html={inlineSvg} />
+  ) : (
+    <img
+      class={cls}
+      src={`/brand/seal-${variant}.svg`}
+      alt={decorative ? '' : label}
+      width={size}
+      height={size}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  )
+}

@@ -17,7 +17,7 @@ const areas = await Promise.all(
 const schema = await practiceOverviewSchema();
 ---
 
-<Base title={page.seo.title} description={page.seo.description} schema={schema}>
+<Base title={page.seo.title} description={page.seo.description} schema={schema} preloadItalic={page.heading.includes('*')}>
   <PageHeader eyebrow={page.eyebrow} title={page.heading} intro={page.intro} crumbs={[{ name: 'Practice Areas', href: '/practice-areas/' }]} />
 
   <div class="container areas">

@@ -13,7 +13,7 @@ const { intro } = Astro.props;
   <div class="container approach__grid">
     <figure class="approach__figure" data-reveal>
       <div class="frame frame--left approach__frame">
-        <Photo src={intro.image.src} alt={intro.image.alt} sizes="(min-width: 64em) 36vw, (min-width: 40em) 70vw, 100vw" />
+        <Photo src={intro.image.src} alt={intro.image.alt} sizes="(min-width: 64em) 36vw, (min-width: 40em) 30rem, calc(100vw - 3rem)" />
       </div>
     </figure>
     <div class="approach__copy">

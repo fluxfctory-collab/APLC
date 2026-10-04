@@ -18,7 +18,7 @@ const pages = [];
 })(DIST);
 
 let problems = 0;
-const warn = (page, msg) => { problems++; console.log(`  ✗ ${msg}`); };
+const warn = (_page, msg) => { problems++; console.log(`  ✗ ${msg}`); };
 for (const file of pages.sort()) {
   const html = fs.readFileSync(file, 'utf8');
   const rel = '/' + path.relative(DIST, file).replace(/index\.html$/, '');

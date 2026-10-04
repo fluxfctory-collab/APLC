@@ -181,7 +181,7 @@ const menuLinks = [{ href: '/', label: 'Home' }, ...NAV];
 
   .wordmark__name {
     font-family: var(--font-serif);
-    font-weight: 600;
+    font-weight: 500;
     font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.75rem);
     line-height: 1;
     letter-spacing: 0.005em;
@@ -199,19 +199,14 @@ const menuLinks = [{ href: '/', label: 'Home' }, ...NAV];
     transition: opacity var(--dur) var(--ease);
   }
 
+  /* The long tagline shows only where the header has room for it. */
   .wordmark__spec {
     display: none;
   }
 
-  @media (min-width: 30em) {
+  @media (min-width: 30em) and (max-width: 47.99em), (min-width: 75em) {
     .wordmark__spec {
       display: inline;
-    }
-  }
-
-  @media (min-width: 64em) and (max-width: 74.99em) {
-    .wordmark__spec {
-      display: none;
     }
   }
 
@@ -290,7 +285,7 @@ const menuLinks = [{ href: '/', label: 'Home' }, ...NAV];
   .header-phone__number {
     font-family: var(--font-serif);
     font-size: 1.3rem;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.1;
     font-variant-numeric: lining-nums;
     letter-spacing: 0.02em;
@@ -474,7 +469,7 @@ const menuLinks = [{ href: '/', label: 'Home' }, ...NAV];
   .menu__phone {
     font-family: var(--font-serif);
     font-size: 1.75rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--ink);
     text-decoration: none;
     font-variant-numeric: lining-nums;

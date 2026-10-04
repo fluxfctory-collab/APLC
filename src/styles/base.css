@@ -381,3 +381,10 @@ sup.reg {
 [class*='__num'] {
   font-variant-numeric: lining-nums;
 }
+
+/* Below-the-fold sections: let the browser skip their layout until they
+   approach the viewport (faster first render on phones). */
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}

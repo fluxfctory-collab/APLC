@@ -36,7 +36,7 @@ const COLORS = {
   ink: '#1B1E24',
 };
 
-const f = (n) => Number(n.toFixed(2));
+const f = (n) => Number(n.toFixed(1)); // 0.1-unit precision on a 400-unit viewBox is visually exact
 
 /* ---------------------------------------------------------------------------
  * Monogram: an "H" whose crossbar is the shoulder of a lowercase "h",
@@ -194,7 +194,7 @@ const monoX = C - MONO_W / 2;
 const monoY = C - (mono.h * monoScale) / 2;
 const monoTransform = `translate(${f(monoX)} ${f(monoY)}) scale(${f(monoScale)})`;
 
-console.log('top span', (topText.span*180/Math.PI).toFixed(1), 'bottom span', (bottomText.span*180/Math.PI).toFixed(1), 'sep at', (sepAngle*180/Math.PI).toFixed(1));
+
 const lettering = `${topText.d}${bottomText.d}${sepDots}`;
 
 const header = (title, desc) =>

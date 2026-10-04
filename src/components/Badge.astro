@@ -28,7 +28,7 @@ const height = size === 'sm' ? 40 : 52;
   ) : img ? (
     external ? (
       <a class={`plate plate--${size}`} {...external}>
-        <Image src={img} alt={`${c.badge_alt || c.issuer} — view profile (opens in a new tab)`} height={height} densities={[1, 2]} format="webp" loading="lazy" />
+        <Image src={img} alt={`${c.badge_alt || c.issuer} — view profile (opens in a new tab)`} height={height} densities={[1, 2]} format="webp" quality={72} loading="lazy" />
       </a>
     ) : (
       <span class={`plate plate--${size}`}>

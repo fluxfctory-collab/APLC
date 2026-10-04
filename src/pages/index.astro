@@ -18,12 +18,12 @@ const home = (await getEntry('home', 'home'))!.data;
 const schema = await homeSchema();
 ---
 
-<Base title={home.seo.title} description={home.seo.description} schema={schema} preloadItalic>
+<Base title={home.seo.title} description={home.seo.description} schema={schema} preloadItalic={home.hero.headline.includes('*')}>
   <Hero hero={home.hero} />
   <CredentialsBand label={home.credentials_band.label} />
   <Approach intro={home.intro} />
 
-  <section class="section section--paper practice-preview" aria-labelledby="practice-title">
+  <section class="section section--paper practice-preview defer-render" aria-labelledby="practice-title">
     <div class="container">
       <div class="practice-preview__head">
         <div>
@@ -36,7 +36,7 @@ const schema = await homeSchema();
       <div class="practice-preview__foot">
         <p class="practice-preview__note">
           <span class="practice-preview__note-rule" aria-hidden="true"></span>
-          <span>{home.practice_preview.custody_note} <a class="link" href="/practice-areas/#custody">Learn more</a></span>
+          <span>{home.practice_preview.custody_note} <a class="link" href="/practice-areas/#custody">About this policy</a></span>
         </p>
         <a class="text-link" href="/practice-areas/">{home.practice_preview.link_label} <Arrow /></a>
       </div>
