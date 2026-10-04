@@ -1,0 +1,470 @@
+# =============================================================================
+# Website editor (Decap CMS) — Helen Popich Harris, APLC
+# Every field here maps 1:1 to src/content.config.ts. Keep the two in sync.
+# Client instructions: EDITING-GUIDE.md · Setup: HANDOFF.md
+# =============================================================================
+
+backend:
+  name: github
+  repo: fluxfctory-collab/APLC # [[CONFIRM]] final repository owner/name
+  branch: main
+  # GitHub sign-in is brokered by Netlify's built-in OAuth provider
+  # (Netlify → Site configuration → Access & security → OAuth). See HANDOFF.md.
+  commit_messages:
+    create: "Website edit: create {{collection}} “{{slug}}”"
+    update: "Website edit: update {{collection}} “{{slug}}”"
+    delete: "Website edit: delete {{collection}} “{{slug}}”"
+    uploadMedia: "Website edit: upload “{{path}}”"
+    deleteMedia: "Website edit: delete “{{path}}”"
+
+# Drafts → Ready → Publish. Each draft gets a free Netlify Deploy Preview link,
+# and only "Publish" triggers a production deploy (which uses Netlify credits).
+publish_mode: editorial_workflow
+
+# Developers only: `npm run cms` + `npm run dev`, then open /admin/ locally.
+local_backend: true
+
+site_url: https://harrisaplc.com # [[CONFIRM]] domain
+display_url: https://harrisaplc.com
+logo_url: /brand/seal-color.svg
+locale: en
+
+# All photos and logos live here; the site optimises them automatically
+# (AVIF/WebP/JPEG at several sizes). Upload high-quality JPEG or PNG files.
+media_folder: src/assets/uploads
+public_folder: /src/assets/uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+# Reusable field definitions -------------------------------------------------
+_hints:
+  markers: &marker_hint "Tip: add [[CONFIRM: a note]] to flag anything still to be confirmed. Flags show only while review mode is on."
+  italics: &italic_hint "Wrap words in *asterisks* to set them in italics, e.g. Counsel for the divorce where *more is at stake.*"
+
+_fields:
+  seo: &seo
+    label: "Search engine listing"
+    name: seo
+    widget: object
+    collapsed: true
+    hint: "How this page appears in Google results and when shared."
+    fields:
+      - { label: "Page title (about 50–65 characters)", name: title, widget: string }
+      - { label: "Description (about 140–160 characters)", name: description, widget: text }
+  cta: &cta
+    label: "Closing call to action"
+    name: cta
+    widget: object
+    collapsed: true
+    fields:
+      - { label: "Heading", name: heading, widget: string }
+      - { label: "Text", name: body, widget: text, required: false }
+      - { label: "Button label", name: button_label, widget: string }
+
+collections:
+  # ---------------------------------------------------------------------------
+  - name: settings
+    label: "Site settings"
+    description: "Contact details, office hours, profile links and the site-wide disclaimer. Changes here update every page."
+    editor: { preview: false }
+    format: json
+    files:
+      - name: site
+        label: "Site settings"
+        file: src/content/settings/site.json
+        fields:
+          - label: "Review mode (pre-launch)"
+            name: review_mode
+            widget: boolean
+            default: true
+            hint: "ON: items marked [[CONFIRM]] show as small pink flags for review. Turn OFF before launch — the flags are then hidden everywhere."
+          - { label: "Firm name", name: firm_name, widget: string }
+          - { label: "Attorney name", name: attorney_name, widget: string }
+          - { label: "Attorney title", name: attorney_title, widget: string }
+          - { label: "Header tagline", name: header_tagline, widget: string, hint: "Shown beneath the name in the header." }
+          - { label: "Phone (as displayed)", name: phone_display, widget: string, hint: "e.g. 337.291.6092" }
+          - label: "Phone (for tap-to-call)"
+            name: phone_link
+            widget: string
+            pattern: ['^\+1\d{10}$', "Use +1 followed by ten digits, e.g. +13372916092"]
+          - { label: "Fax (as displayed)", name: fax_display, widget: string }
+          - { label: "Email (receives web inquiries)", name: email, widget: string }
+          - label: "Office address"
+            name: address
+            widget: object
+            hint: "Keep identical to the Google Business Profile."
+            fields:
+              - { label: "Street", name: street, widget: string }
+              - { label: "Suite", name: suite, widget: string, required: false }
+              - { label: "City", name: city, widget: string }
+              - { label: "State", name: state, widget: string }
+              - { label: "State (2 letters)", name: state_abbr, widget: string }
+              - { label: "ZIP", name: zip, widget: string }
+          - { label: "Google Maps link", name: maps_url, widget: string }
+          - { label: "Google Maps embed address (Contact page map)", name: map_embed_url, widget: string }
+          - label: "Map coordinates (for search engines)"
+            name: geo
+            widget: object
+            collapsed: true
+            fields:
+              - { label: "Latitude", name: lat, widget: number, value_type: float }
+              - { label: "Longitude", name: lng, widget: number, value_type: float }
+          - label: "Office hours"
+            name: hours
+            widget: list
+            summary: "{{fields.label}} · {{fields.time}}"
+            fields:
+              - { label: "Days (as displayed)", name: label, widget: string, hint: "e.g. Monday – Thursday" }
+              - { label: "Hours (as displayed)", name: time, widget: string, hint: "e.g. 9:00 a.m. – 4:00 p.m." }
+              - label: "Days (for search engines)"
+                name: days
+                widget: select
+                multiple: true
+                options: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+              - { label: "Opens (24-hour)", name: opens, widget: string, pattern: ['^\d{2}:\d{2}$', "Use 24-hour time, e.g. 09:00"] }
+              - { label: "Closes (24-hour)", name: closes, widget: string, pattern: ['^\d{2}:\d{2}$', "Use 24-hour time, e.g. 16:00"] }
+          - label: "Note beneath the hours"
+            name: hours_note
+            widget: string
+            required: false
+            hint: "Hours are added to Google's structured data only once this note no longer contains [[CONFIRM]]."
+          - label: "Areas served"
+            name: area_served
+            widget: list
+            field: { label: "Area", name: area, widget: string }
+          - label: "Professional profile links"
+            name: profiles
+            widget: list
+            summary: "{{fields.label}}"
+            hint: "Used for search engines (sameAs). Leave a link blank until confirmed."
+            fields:
+              - { label: "Name", name: label, widget: string }
+              - { label: "Link", name: url, widget: string, required: false }
+          - { label: "Disclaimer (footer and Contact page)", name: footer_disclaimer, widget: text, hint: *marker_hint }
+          - { label: "Responsible attorney statement", name: responsible_attorney, widget: text }
+          - { label: "Default sharing image (path)", name: default_share_image, widget: string, hint: "Image used when a page is shared on social media or in messages. Developer-managed." }
+
+  # ---------------------------------------------------------------------------
+  - name: pages
+    label: "Pages"
+    description: "Wording and photographs for each page."
+    editor: { preview: false }
+    format: frontmatter
+    files:
+      # ---- Home ----------------------------------------------------------
+      - name: home
+        label: "Home"
+        file: src/content/home/home.md
+        fields:
+          - *seo
+          - label: "Hero (top of page)"
+            name: hero
+            widget: object
+            fields:
+              - { label: "Small heading", name: eyebrow, widget: string }
+              - { label: "Headline", name: headline, widget: string, hint: *italic_hint }
+              - { label: "Introduction", name: subhead, widget: text }
+              - { label: "Main button", name: primary_cta, widget: string }
+              - { label: "Phone button", name: secondary_cta, widget: string, hint: "{phone} inserts the number from Site settings." }
+              - { label: "Credentials line", name: credential_line, widget: string, hint: "Separate items with ·" }
+              - label: "Portrait — Home hero"
+                name: image
+                widget: object
+                fields:
+                  - { label: "Photo", name: src, widget: image, choose_url: false, hint: "Tall (portrait) photo, at least 900 px wide." }
+                  - { label: "Description for screen readers", name: alt, widget: string }
+          - label: "Credentials band"
+            name: credentials_band
+            widget: object
+            collapsed: true
+            hint: "The credentials themselves are edited under “Credentials & recognition”."
+            fields:
+              - { label: "Label", name: label, widget: string }
+          - label: "01 · Approach"
+            name: intro
+            widget: object
+            fields:
+              - { label: "Section label", name: label, widget: string }
+              - { label: "Heading", name: heading, widget: string, hint: *italic_hint }
+              - { label: "Text", name: body, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+              - { label: "Signature", name: signature, widget: string }
+              - label: "Photo — Approach section"
+                name: image
+                widget: object
+                fields:
+                  - { label: "Photo", name: src, widget: image, choose_url: false }
+                  - { label: "Description for screen readers", name: alt, widget: string }
+          - label: "02 · Practice preview"
+            name: practice_preview
+            widget: object
+            hint: "The practice areas themselves are edited under “Practice areas”."
+            fields:
+              - { label: "Section label", name: label, widget: string }
+              - { label: "Heading", name: heading, widget: string, hint: *italic_hint }
+              - { label: "Introduction", name: intro, widget: text }
+              - { label: "Custody note", name: custody_note, widget: string }
+              - { label: "Link label", name: link_label, widget: string }
+          - label: "03 · Why clients choose Ms. Harris"
+            name: pillars
+            widget: object
+            fields:
+              - { label: "Section label", name: label, widget: string }
+              - { label: "Heading", name: heading, widget: string }
+              - label: "Pillars"
+                name: items
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: "Title", name: title, widget: string }
+                  - { label: "Text", name: body, widget: text }
+          - label: "Philosophy quote"
+            name: quote
+            widget: object
+            fields:
+              - { label: "Quotation", name: text, widget: text }
+              - { label: "Attribution", name: attribution, widget: string, hint: *marker_hint }
+          - label: "Closing call to action"
+            name: closing_cta
+            widget: object
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Text", name: body, widget: text, required: false }
+              - { label: "Button label", name: button_label, widget: string }
+
+      # ---- About ---------------------------------------------------------
+      - name: about
+        label: "About Helen"
+        file: src/content/about/about.md
+        fields:
+          - *seo
+          - label: "Hero"
+            name: hero
+            widget: object
+            fields:
+              - { label: "Small heading", name: eyebrow, widget: string }
+              - { label: "Name", name: name, widget: string }
+              - { label: "Title line", name: title_line, widget: string }
+              - { label: "Positioning statement", name: statement, widget: text }
+              - label: "Portrait — About page"
+                name: image
+                widget: object
+                fields:
+                  - { label: "Photo", name: src, widget: image, choose_url: false, hint: "Portrait orientation (4:5) works best." }
+                  - { label: "Description for screen readers", name: alt, widget: string }
+          - { label: "Biography heading", name: bio_heading, widget: string }
+          - label: "Biography"
+            name: body
+            widget: markdown
+            buttons: [bold, italic, link, heading-two, bulleted-list]
+            editor_components: []
+            hint: "Third person. Use “Heading 2” for sub-headings."
+          - label: "At a glance (fact panel)"
+            name: facts
+            widget: list
+            summary: "{{fields.heading}}"
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Items", name: items, widget: list, field: { label: "Item", name: item, widget: string } }
+          - label: "Speaking & Teaching"
+            name: speaking
+            widget: object
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Introduction", name: intro, widget: text }
+              - label: "Topics"
+                name: items
+                widget: list
+                summary: "{{fields.topic}}"
+                fields:
+                  - { label: "Topic", name: topic, widget: string }
+                  - { label: "Program or organization", name: venue, widget: string, required: false }
+          - label: "Credentials section"
+            name: credentials
+            widget: object
+            collapsed: true
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Introduction", name: intro, widget: text }
+          - label: "Photo — Speaking section"
+            name: secondary_image
+            widget: object
+            required: false
+            fields:
+              - { label: "Photo", name: src, widget: image, choose_url: false }
+              - { label: "Description for screen readers", name: alt, widget: string }
+          - *cta
+
+      # ---- Practice areas overview ---------------------------------------
+      - name: practice-overview
+        label: "Practice Areas (overview page)"
+        file: src/content/practice-overview/index.md
+        fields:
+          - *seo
+          - { label: "Small heading", name: eyebrow, widget: string }
+          - { label: "Heading", name: heading, widget: string, hint: *italic_hint }
+          - { label: "Introduction", name: intro, widget: text }
+          - label: "Custody note"
+            name: custody
+            widget: object
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Text", name: body, widget: text, hint: *marker_hint }
+          - *cta
+
+      # ---- Contact -------------------------------------------------------
+      - name: contact
+        label: "Contact"
+        file: src/content/contact/contact.md
+        fields:
+          - *seo
+          - { label: "Small heading", name: eyebrow, widget: string }
+          - { label: "Heading", name: heading, widget: string, hint: *italic_hint }
+          - { label: "Introduction", name: intro, widget: text }
+          - { label: "Details heading", name: details_heading, widget: string }
+          - { label: "Parking / visiting note", name: parking_note, widget: text, required: false }
+          - label: "Portrait — Contact page"
+            name: portrait
+            widget: object
+            fields:
+              - { label: "Photo", name: src, widget: image, choose_url: false }
+              - { label: "Description for screen readers", name: alt, widget: string }
+              - { label: "Caption", name: caption, widget: string }
+          - label: "Inquiry form"
+            name: form
+            widget: object
+            hint: "Field names are fixed so Netlify keeps delivering inquiries; only the wording is editable."
+            fields:
+              - { label: "Heading", name: heading, widget: string }
+              - { label: "Introduction", name: intro, widget: text }
+              - { label: "Matter types", name: matter_types, widget: list, field: { label: "Type", name: type, widget: string } }
+              - { label: "Matter type help text", name: matter_help, widget: string }
+              - { label: "Other party help text", name: other_party_help, widget: string }
+              - { label: "Message help text", name: message_help, widget: string }
+              - { label: "Consent statement", name: consent_label, widget: text }
+              - { label: "Submit button", name: submit_label, widget: string }
+          - label: "Photo band (bottom of page)"
+            name: band
+            widget: object
+            fields:
+              - { label: "Show this band", name: show, widget: boolean, default: true }
+              - label: "Photo"
+                name: image
+                widget: object
+                fields:
+                  - { label: "Photo", name: src, widget: image, choose_url: false, hint: "Wide landscape photo, at least 2000 px wide if possible." }
+                  - { label: "Description (leave blank if decorative)", name: alt, widget: string, required: false }
+              - { label: "Caption", name: caption, widget: string }
+
+      # ---- Legal ---------------------------------------------------------
+      - name: privacy
+        label: "Privacy Policy"
+        file: src/content/legal/privacy.md
+        fields:
+          - { label: "Title", name: title, widget: string }
+          - *seo
+          - { label: "Last updated", name: updated, widget: string, hint: "e.g. October 2026" }
+          - { label: "Policy text", name: body, widget: markdown, buttons: [bold, italic, link, heading-two, bulleted-list], editor_components: [] }
+      - name: disclaimer
+        label: "Disclaimer"
+        file: src/content/legal/disclaimer.md
+        fields:
+          - { label: "Title", name: title, widget: string }
+          - *seo
+          - { label: "Last updated", name: updated, widget: string }
+          - { label: "Disclaimer text", name: body, widget: markdown, buttons: [bold, italic, link, heading-two, bulleted-list], editor_components: [] }
+
+      # ---- Utility -------------------------------------------------------
+      - name: thank-you
+        label: "Thank-you page (after the form)"
+        file: src/content/utility/thank-you.md
+        fields:
+          - { label: "Small heading", name: eyebrow, widget: string }
+          - { label: "Heading", name: heading, widget: string }
+          - *seo
+          - { label: "Text", name: body, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+      - name: not-found
+        label: "Page-not-found (404) page"
+        file: src/content/utility/not-found.md
+        fields:
+          - { label: "Small heading", name: eyebrow, widget: string }
+          - { label: "Heading", name: heading, widget: string }
+          - *seo
+          - { label: "Text", name: body, widget: markdown, buttons: [bold, italic, link], editor_components: [] }
+
+  # ---------------------------------------------------------------------------
+  - name: practice
+    label: "Practice areas"
+    label_singular: "Practice area"
+    description: "Each area appears on the Home page, the Practice Areas page, and its own page. Order controls the numbering (01–06)."
+    folder: src/content/practice
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{order}} · {{title}}"
+    sortable_fields: [order, title]
+    editor: { preview: false }
+    fields:
+      - { label: "Title", name: title, widget: string }
+      - { label: "Short title (menus)", name: short_title, widget: string }
+      - { label: "Order", name: order, widget: number, value_type: int, min: 1 }
+      - { label: "One-line summary", name: summary, widget: text }
+      - *seo
+      - label: "What Ms. Harris reviews (list on the area's own page)"
+        name: focus
+        widget: list
+        required: false
+        field: { label: "Item", name: item, widget: string }
+      - label: "Common questions"
+        name: faqs
+        widget: list
+        required: false
+        summary: "{{fields.question}}"
+        fields:
+          - { label: "Question", name: question, widget: string }
+          - { label: "Answer", name: answer, widget: text }
+      - label: "Attorney has reviewed this content"
+        name: attorney_reviewed
+        widget: boolean
+        default: false
+        hint: "Tick once Ms. Harris has approved the legal statements on this page."
+      - { label: "Main text (150–250 words)", name: body, widget: markdown, buttons: [bold, italic, link, bulleted-list], editor_components: [] }
+
+  # ---------------------------------------------------------------------------
+  - name: credentials
+    label: "Credentials & recognition"
+    label_singular: "Credential"
+    description: "Shown in the dark band on the Home page, on the About page, and in the footer. Use the exact wording approved by each organization."
+    folder: src/content/credentials
+    create: true
+    delete: true
+    slug: "{{slug}}"
+    identifier_field: statement
+    summary: "{{order}} · {{statement}}"
+    sortable_fields: [order]
+    editor: { preview: false }
+    fields:
+      - { label: "Display title", name: title, widget: string, hint: "Larger line in the Home page band, e.g. “Fellow”." }
+      - { label: "Issuing organization", name: issuer, widget: string }
+      - { label: "Full statement (exact wording)", name: statement, widget: string, hint: "e.g. Fellow, American Academy of Matrimonial Lawyers" }
+      - { label: "Year(s)", name: years, widget: string, required: false }
+      - { label: "Profile link", name: link, widget: string, required: false }
+      - label: "Official badge or logo image"
+        name: badge_image
+        widget: image
+        required: false
+        choose_url: false
+        hint: "Only the official, licensed badge from the issuing organization. Never a recreated logo."
+      - { label: "Badge description (for screen readers)", name: badge_alt, widget: string, required: false }
+      - label: "Official badge embed code"
+        name: badge_embed
+        widget: code
+        default_language: html
+        output_code_only: true
+        required: false
+        hint: "Paste the code from the organization's badge portal (e.g. Super Lawyers, Martindale-Hubbell). Used instead of the image if present."
+      - { label: "Order", name: order, widget: number, value_type: int, min: 1 }
+      - { label: "Show on the website", name: visible, widget: boolean, default: true }
+      - { label: "Show in the Home page band", name: show_in_band, widget: boolean, default: true }
