@@ -33,4 +33,6 @@ When a marital estate includes a family business, a professional practice, signi
 
 Typical issues include the valuation of closely held businesses; the treatment of executive and deferred compensation, bonuses, stock options, and restricted stock; separate property claims and the tracing of funds; interests in trusts; and the tax consequences of how assets are divided. Each requires careful attention to the records and, often, the involvement of qualified valuation and accounting professionals.
 
+Ms. Harris also works with a client's existing advisors — wealth managers, CPAs, and estate-planning counsel — so that the settlement fits the larger financial picture, including how assets will be held, taxed, and planned for after the divorce.
+
 Discretion is part of the work. Ms. Harris handles sensitive financial and personal information with care, communicates directly with her clients, and seeks resolutions that protect privacy wherever the process allows.
