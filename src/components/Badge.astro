@@ -1,0 +1,56 @@
+---
+/**
+ * Badge slot for one credential. Shows, in order of preference:
+ *   1. the official embed code (Super Lawyers / Martindale badge portals),
+ *   2. an official badge or logo image on a light "plate",
+ *   3. a typographic fallback card (only when `fallback` is set).
+ * Third-party marks are never redrawn or approximated.
+ */
+import { Image } from 'astro:assets';
+import { resolveImage } from '../lib/images';
+import { reg } from '../lib/text';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  credential: CollectionEntry<'credentials'>;
+  fallback?: boolean;
+  size?: 'sm' | 'md';
+}
+const { credential, fallback = false, size = 'md' } = Astro.props;
+const c = credential.data;
+const img = resolveImage(c.badge_image);
+const external = c.link ? { href: c.link, target: '_blank', rel: 'noopener' } : null;
+const height = size === 'sm' ? 40 : 52;
+---
+{
+  c.badge_embed ? (
+    <div class="badge-embed" set:html={c.badge_embed} />
+  ) : img ? (
+    external ? (
+      <a class={`plate plate--${size}`} {...external}>
+        <Image src={img} alt={`${c.badge_alt || c.issuer} — view profile (opens in a new tab)`} height={height} densities={[1, 2]} format="webp" loading="lazy" />
+      </a>
+    ) : (
+      <span class={`plate plate--${size}`}>
+        <Image src={img} alt={c.badge_alt || c.issuer} height={height} densities={[1, 2]} format="webp" loading="lazy" />
+      </span>
+    )
+  ) : fallback ? (
+    <div class="badge-fallback">
+      <span class="badge-fallback__issuer">{c.issuer}</span>
+      <span class="badge-fallback__title" set:html={reg(c.title)} />
+      {external && (
+        <a class="badge-fallback__link link small" {...external}>
+          View profile<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      )}
+    </div>
+  ) : null
+}
+
+<style>
+  .plate--sm img { max-height: 2.5rem; }
+  .plate--md img { max-height: 3.25rem; }
+  .badge-embed { display: inline-block; }
+  .badge-fallback__link { margin-top: 0.35rem; align-self: flex-start; }
+</style>

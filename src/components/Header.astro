@@ -1,0 +1,486 @@
+---
+/**
+ * Global header — sticky; transparent at the top of the page, solid ivory and
+ * condensed once the page scrolls. Below 64em the nav collapses into a
+ * full-screen menu built on <dialog> (native focus trap, Esc to close).
+ */
+import Arrow from './Arrow.astro';
+import { NAV, getSettings, telHref, addressLines } from '../lib/site';
+
+const settings = await getSettings();
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+const menuLinks = [{ href: '/', label: 'Home' }, ...NAV];
+---
+
+<div class="header-sentinel" data-header-sentinel aria-hidden="true"></div>
+<header class="site-header" data-header>
+  <div class="container container--wide site-header__inner">
+    <a class="wordmark" href="/">
+      <span class="wordmark__name">{settings.attorney_name}</span>
+      <span class="wordmark__tag">
+        {settings.attorney_title}<span class="wordmark__spec"><span aria-hidden="true"> · </span>{settings.header_tagline}</span>
+      </span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <ul role="list">
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a class="header-phone" href={telHref(settings)}>
+        <span class="header-phone__label">Call</span>
+        <span class="header-phone__number">{settings.phone_display}</span>
+      </a>
+      <a class="btn btn--sm header-cta" href="/contact/#inquiry">Schedule a Consultation</a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-haspopup="dialog"
+        aria-controls="site-menu"
+        aria-expanded="false"
+        data-menu-open
+      >
+        <span class="menu-toggle__label">Menu</span>
+        <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="site-menu" class="menu" aria-label="Site menu" data-menu>
+  <div class="container menu__top">
+    <a class="wordmark" href="/">
+      <span class="wordmark__name">{settings.attorney_name}</span>
+      <span class="wordmark__tag">{settings.attorney_title}</span>
+    </a>
+    <button class="menu-close" type="button" data-menu-close>
+      <span>Close</span>
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.25"></path></svg>
+    </button>
+  </div>
+  <nav class="container menu__nav" aria-label="Site">
+    <ol role="list">
+      {
+        menuLinks.map((item, i) => (
+          <li>
+            <a href={item.href} aria-current={path === item.href || (item.href !== '/' && path.startsWith(item.href)) ? 'page' : undefined}>
+              <span class="menu__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+  <div class="container menu__foot">
+    <a class="btn btn--block" href="/contact/#inquiry">Schedule a Consultation <Arrow /></a>
+    <div class="menu__contact">
+      <a href={telHref(settings)} class="menu__phone">{settings.phone_display}</a>
+      <a href={`mailto:${settings.email}`} class="link">{settings.email}</a>
+      <p class="small muted">{addressLines(settings).join(' · ')}</p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Header state: solid + condensed once the top sentinel scrolls out of view.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const sentinel = document.querySelector('[data-header-sentinel]');
+  if (header && sentinel && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => header.classList.toggle('is-scrolled', !entry.isIntersecting)).observe(sentinel);
+  }
+
+  // Mobile menu
+  const menu = document.querySelector<HTMLDialogElement>('[data-menu]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+  if (menu && openBtn && typeof menu.showModal === 'function') {
+    const setExpanded = (v: boolean) => openBtn.setAttribute('aria-expanded', String(v));
+    openBtn.addEventListener('click', () => {
+      menu.showModal();
+      setExpanded(true);
+    });
+    closeBtn?.addEventListener('click', () => menu.close());
+    menu.addEventListener('close', () => {
+      setExpanded(false);
+      openBtn.focus();
+    });
+    // Close when a link is followed (incl. same-page anchors).
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+    // Close if the viewport grows past the breakpoint while open.
+    matchMedia('(min-width: 64em)').addEventListener('change', (e) => e.matches && menu.open && menu.close());
+  }
+</script>
+
+<style>
+  .header-sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 24px;
+    pointer-events: none;
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: rgb(247 243 236 / 0);
+    transition:
+      background-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .site-header.is-scrolled {
+    background-color: rgb(247 243 236 / 0.95);
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  @supports (backdrop-filter: blur(8px)) {
+    .site-header.is-scrolled {
+      background-color: rgb(247 243 236 / 0.86);
+      backdrop-filter: saturate(1.15) blur(12px);
+      -webkit-backdrop-filter: saturate(1.15) blur(12px);
+    }
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: var(--header-h);
+    transition: height var(--dur) var(--ease);
+  }
+
+  .is-scrolled .site-header__inner {
+    height: var(--header-h-condensed);
+  }
+
+  /* ---- Wordmark ---- */
+  .wordmark {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    color: var(--ink);
+    text-decoration: none;
+    min-width: 0;
+  }
+
+  .wordmark__name {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.75rem);
+    line-height: 1;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+  }
+
+  .wordmark__tag {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: var(--slate);
+    white-space: nowrap;
+    transition: opacity var(--dur) var(--ease);
+  }
+
+  .wordmark__spec {
+    display: none;
+  }
+
+  @media (min-width: 30em) {
+    .wordmark__spec {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 64em) and (max-width: 74.99em) {
+    .wordmark__spec {
+      display: none;
+    }
+  }
+
+  /* ---- Primary nav ---- */
+  .primary-nav {
+    display: none;
+    margin-left: auto;
+  }
+
+  .primary-nav ul {
+    display: flex;
+    gap: clamp(1.25rem, 0.5rem + 1.5vw, 2.25rem);
+  }
+
+  .primary-nav a {
+    position: relative;
+    display: inline-block;
+    padding-block: 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .primary-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.25rem;
+    height: 1px;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .primary-nav a:hover::after,
+  .primary-nav a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .primary-nav a:hover {
+    color: var(--oxblood);
+  }
+
+  /* ---- Actions ---- */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 0.5rem + 1vw, 1.75rem);
+  }
+
+  .header-phone {
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.15rem;
+    color: var(--ink);
+    text-decoration: none;
+    padding-left: clamp(1rem, 0.5rem + 1vw, 1.75rem);
+    border-left: 1px solid var(--line-strong);
+  }
+
+  .header-phone__label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass-text);
+    line-height: 1;
+  }
+
+  .header-phone__number {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .header-phone:hover .header-phone__number {
+    color: var(--oxblood);
+  }
+
+  .header-cta {
+    display: none;
+  }
+
+  @media (min-width: 48em) {
+    .header-cta {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .primary-nav {
+      display: block;
+    }
+    .menu-toggle {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 72em) {
+    .header-phone {
+      display: inline-flex;
+    }
+  }
+
+  /* ---- Menu toggle ---- */
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.5rem 0 0.5rem 0.5rem;
+    background: none;
+    border: 0;
+    color: var(--ink);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle__icon {
+    display: grid;
+    gap: 6px;
+    width: 26px;
+  }
+
+  .menu-toggle__icon span {
+    display: block;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .menu-toggle__icon span:last-child {
+    width: 70%;
+    justify-self: end;
+  }
+
+  /* ---- Full-screen menu ---- */
+  .menu {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--ivory);
+    color: var(--ink);
+    overscroll-behavior: contain;
+  }
+
+  .menu[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu[open] {
+      animation: menu-in 240ms var(--ease);
+    }
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  .menu::backdrop {
+    background: var(--ivory);
+  }
+
+  .menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--header-h);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu-close {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    background: none;
+    border: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .menu__nav {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-block: 2rem;
+  }
+
+  .menu__nav ol {
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu__nav li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu__nav a {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding-block: 0.9rem;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 1.5rem + 3vw, 3rem);
+    line-height: 1.1;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .menu__nav a[aria-current='page'] {
+    font-style: italic;
+  }
+
+  .menu__num {
+    min-width: 1.75rem;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--brass-text);
+  }
+
+  .menu__foot {
+    display: grid;
+    gap: 1.5rem;
+    padding-block: 1.5rem 2.25rem;
+    padding-bottom: max(2.25rem, env(safe-area-inset-bottom));
+  }
+
+  .menu__contact {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .menu__phone {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    font-variant-numeric: lining-nums;
+  }
+
+  :global(html:has(.menu[open])) {
+    overflow: hidden;
+  }
+</style>

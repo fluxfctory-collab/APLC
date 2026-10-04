@@ -1,0 +1,10 @@
+---
+/** Numbered section marker:  01 ——— APPROACH */
+interface Props { num: string; label: string; as?: 'p' | 'div' }
+const { num, label } = Astro.props;
+---
+<p class="marker">
+  <span class="marker__num" aria-hidden="true">{num}</span>
+  <span class="marker__rule" aria-hidden="true"></span>
+  <span class="marker__label">{label}</span>
+</p>

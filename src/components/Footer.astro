@@ -1,0 +1,312 @@
+---
+/**
+ * Global footer (dark ink). Carries the full name/address/phone on every page
+ * (NAP consistency + Louisiana advertising-rule defaults: firm, attorney,
+ * office location, responsible attorney and disclaimer on every page).
+ */
+import Seal from './Seal.astro';
+import Badge from './Badge.astro';
+import { reg } from '../lib/text';
+import { NAV, getSettings, getCredentials, getPracticeAreas, addressLines, telHref } from '../lib/site';
+
+const settings = await getSettings();
+const credentials = await getCredentials();
+const areas = await getPracticeAreas();
+const badges = credentials.filter((c) => c.data.badge_image || c.data.badge_embed);
+const year = new Date().getFullYear();
+const [line1, line2] = addressLines(settings);
+---
+
+<footer class="site-footer on-ink" id="site-footer">
+  <div class="container container--wide">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <Seal class="footer-seal" label="Seal of Helen Popich Harris, Board Certified Family Law Specialist" />
+        <div>
+          <p class="footer-firm">{settings.firm_name}</p>
+          <p class="footer-sub">{settings.attorney_name}, {settings.attorney_title}</p>
+          <p class="footer-sub">{settings.header_tagline}</p>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h2 class="footer-heading">Office</h2>
+        <address class="footer-address">
+          {line1}<br />{line2}
+        </address>
+        <a class="footer-link" href={settings.maps_url} target="_blank" rel="noopener">
+          Open in Google Maps<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </div>
+
+      <div class="footer-col">
+        <h2 class="footer-heading">Contact</h2>
+        <dl class="footer-dl">
+          <div><dt>Telephone</dt><dd><a class="footer-link" href={telHref(settings)}>{settings.phone_display}</a></dd></div>
+          <div><dt>Fax</dt><dd>{settings.fax_display}</dd></div>
+          <div><dt>Email</dt><dd><a class="footer-link" href={`mailto:${settings.email}`}>{settings.email}</a></dd></div>
+          {
+            settings.hours.map((h) => (
+              <div>
+                <dt>{h.label}</dt>
+                <dd>{h.time}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        {settings.hours_note && <p class="footer-note">{settings.hours_note}</p>}
+      </div>
+
+      <nav class="footer-col" aria-label="Footer">
+        <h2 class="footer-heading">Explore</h2>
+        <ul role="list" class="footer-list">
+          {NAV.map((item) => <li><a class="footer-link" href={item.href}>{item.label}</a></li>)}
+        </ul>
+        <ul role="list" class="footer-list footer-list--areas">
+          {areas.map((a) => <li><a class="footer-link" href={`/practice-areas/${a.id}/`}>{a.data.short_title}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-creds">
+      <ul role="list" class="footer-creds__list">
+        {credentials.map((c) => <li set:html={reg(c.data.statement)} />)}
+      </ul>
+      {
+        badges.length > 0 && (
+          <div class="footer-creds__badges">
+            {badges.map((c) => <Badge credential={c} size="sm" />)}
+          </div>
+        )
+      }
+    </div>
+
+    <div class="footer-legal">
+      <p>{settings.footer_disclaimer}</p>
+      <p>{settings.responsible_attorney}</p>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} {settings.firm_name}. All rights reserved.</p>
+      <ul role="list">
+        <li><a class="footer-link" href="/privacy/">Privacy</a></li>
+        <li><a class="footer-link" href="/disclaimer/">Disclaimer</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink-deep);
+    color: var(--on-ink);
+    padding-top: clamp(4rem, 3rem + 4vw, 6.5rem);
+    padding-bottom: calc(2rem + var(--bar-h) + env(safe-area-inset-bottom));
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  @media (min-width: 48em) {
+    .site-footer {
+      padding-bottom: 2.5rem;
+    }
+  }
+
+  .footer-top {
+    display: grid;
+    align-items: start;
+    gap: 2.75rem 2rem;
+    grid-template-columns: 1fr;
+    padding-bottom: 3rem;
+  }
+
+  @media (min-width: 40em) {
+    .footer-top {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .footer-top {
+      grid-template-columns: 1.5fr 1fr 1.15fr 0.9fr;
+    }
+    .footer-brand {
+      grid-column: auto;
+    }
+  }
+
+  .footer-brand {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .footer-brand :global(.footer-seal) {
+    width: clamp(5.5rem, 4.5rem + 2vw, 7rem);
+    height: auto;
+    flex: none;
+    color: var(--brass);
+  }
+
+  .footer-firm {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--on-ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-sub {
+    font-size: 0.875rem;
+    color: var(--on-ink-muted);
+  }
+
+  .footer-heading {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 1.1rem;
+  }
+
+  .footer-address {
+    font-style: normal;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-link {
+    color: var(--on-ink);
+    text-decoration: underline;
+    text-decoration-color: rgb(168 135 90 / 0.5);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+    transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease);
+  }
+
+  .footer-link:hover {
+    color: var(--brass);
+    text-decoration-color: var(--brass);
+  }
+
+  .footer-list .footer-link,
+  .footer-bottom .footer-link {
+    text-decoration-color: transparent;
+  }
+
+  .footer-list .footer-link:hover,
+  .footer-bottom .footer-link:hover {
+    text-decoration-color: var(--brass);
+  }
+
+  .footer-dl {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .footer-dl div {
+    display: grid;
+    grid-template-columns: 6.75rem 1fr;
+    gap: 0.75rem;
+  }
+
+  .footer-dl dt {
+    color: var(--on-ink-muted);
+    font-size: 0.8125rem;
+    padding-top: 0.1rem;
+  }
+
+  .footer-note {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--on-ink-muted);
+  }
+
+  .footer-list {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .footer-list a {
+    display: inline-block;
+    padding-block: 0.1rem;
+  }
+
+  .footer-list--areas {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(168 135 90 / 0.25);
+    font-size: 0.875rem;
+  }
+
+  .footer-creds {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    padding-block: 2rem;
+    border-top: 1px solid rgb(168 135 90 / 0.35);
+    border-bottom: 1px solid rgb(168 135 90 / 0.35);
+  }
+
+  .footer-creds__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0;
+    flex: 1 1 36rem;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.45;
+    color: var(--on-ink);
+    font-variant-numeric: lining-nums;
+  }
+
+  .footer-creds__list li:not(:last-child)::after {
+    content: '•';
+    margin-inline: 0.85rem;
+    color: var(--brass);
+  }
+
+  .footer-creds__badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-legal {
+    display: grid;
+    gap: 0.6rem;
+    max-width: 72rem;
+    padding-block: 2rem 1.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--on-ink-muted);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(168 135 90 / 0.2);
+    font-size: 0.8125rem;
+    color: var(--on-ink-muted);
+  }
+
+  .footer-bottom ul {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .footer-bottom a {
+    display: inline-block;
+    padding-block: 0.6rem;
+  }
+</style>

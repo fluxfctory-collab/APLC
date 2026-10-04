@@ -1,0 +1,70 @@
+---
+/**
+ * Review-mode notice (shown only while review mode is on). Lets the client
+ * hide the ◆ markers to preview the clean page. Turn review mode off in
+ * /admin → Site settings before launch.
+ */
+---
+<aside class="review-banner" aria-label="Review draft notice" data-review-banner>
+  <p><strong>Review draft.</strong> Items marked <span class="review-banner__chip">◆</span> await confirmation.</p>
+  <button type="button" data-review-toggle aria-pressed="false">Hide markers</button>
+</aside>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-review-toggle]');
+  btn?.addEventListener('click', () => {
+    const hidden = document.documentElement.classList.toggle('hide-confirm');
+    btn.setAttribute('aria-pressed', String(hidden));
+    btn.textContent = hidden ? 'Show markers' : 'Hide markers';
+  });
+</script>
+
+<style>
+  .review-banner {
+    position: fixed;
+    left: 0.75rem;
+    bottom: calc(var(--bar-h) + 0.75rem + env(safe-area-inset-bottom));
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: calc(100% - 1.5rem);
+    padding: 0.5rem 0.6rem 0.5rem 0.9rem;
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: var(--ink);
+    background: #f6e7e4;
+    border: 1px dashed rgb(122 36 48 / 0.55);
+    border-radius: 4px;
+    box-shadow: 0 6px 24px rgb(27 30 36 / 0.12);
+  }
+
+  @media (min-width: 48em) {
+    .review-banner {
+      bottom: 1rem;
+      left: 1rem;
+    }
+  }
+
+  .review-banner__chip {
+    color: var(--oxblood);
+  }
+
+  .review-banner button {
+    flex: none;
+    min-height: 2.25rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--oxblood);
+    background: transparent;
+    border: 1px solid rgb(122 36 48 / 0.55);
+    border-radius: 3px;
+  }
+
+  :global(.hide-confirm .confirm) {
+    display: none !important;
+  }
+</style>

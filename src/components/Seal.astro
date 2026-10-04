@@ -1,0 +1,23 @@
+---
+/**
+ * The redrawn seal, inlined so it inherits colour and stays crisp.
+ * variant: color (burgundy/gold) | current (single colour = CSS `color`)
+ */
+import color from '../assets/brand/seal-color.svg?raw';
+import current from '../assets/brand/seal-current.svg?raw';
+
+interface Props {
+  variant?: 'color' | 'current';
+  class?: string;
+  decorative?: boolean;
+  label?: string;
+}
+const { variant = 'current', class: cls = '', decorative = false, label = 'Seal of Helen Popich Harris, Board Certified Family Law Specialist' } = Astro.props;
+const raw = variant === 'color' ? color : current;
+const a11y = decorative ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${label}"`;
+const svg = raw
+  .replace(/ role="img" aria-labelledby="t d"/, '')
+  .replace(/<title[^>]*>.*?<\/title><desc[^>]*>.*?<\/desc>/, '')
+  .replace('<svg ', `<svg class="${cls}" ${a11y} `);
+---
+<Fragment set:html={svg} />

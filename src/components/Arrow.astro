@@ -1,0 +1,6 @@
+---
+/** Thin editorial arrow used in buttons and links. Decorative. */
+interface Props { class?: string }
+const { class: cls = 'arrow' } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 22 10" fill="none" aria-hidden="true" focusable="false" width="22" height="10"><path d="M0 5h20.5M16.5 1l4 4-4 4" stroke="currentColor" stroke-width="1.25"></path></svg>

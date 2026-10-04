@@ -1,0 +1,137 @@
+/* ==========================================================================
+   Design tokens — "Quiet authority"
+   Palette, type, spacing and motion for Helen Popich Harris, APLC.
+   Every text/background pairing used on the site meets WCAG 2.2 AA
+   (ratios noted beside each token; see QA-REPORT.md).
+   ========================================================================== */
+
+/* ---- Self-hosted fonts (Latin subset, WOFF2, swap) ---------------------- */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-latin-500-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/cormorant-garamond-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-latin-wght-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-latin-wght-italic.woff2') format('woff2');
+}
+
+/* Metric-matched fallbacks keep layout steady while web fonts load (CLS). */
+@font-face {
+  font-family: 'Cormorant Fallback';
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('Georgia');
+  size-adjust: 97.7%;
+  ascent-override: 94.6%;
+  descent-override: 29.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Sans Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 94.7%;
+  ascent-override: 108.1%;
+  descent-override: 42.2%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* ---- Colour ----------------------------------------------------------- */
+  --ivory: #f7f3ec;        /* page — echoes the cream letterhead */
+  --paper: #fffdf9;        /* cards, form surfaces */
+  --white: #ffffff;
+  --ink: #1b1e24;          /* text 15.1:1 on ivory; dark sections */
+  --ink-deep: #14161b;     /* footer */
+  --ink-raised: #23272f;   /* raised surfaces on dark */
+  --slate: #4a505c;        /* secondary text 7.3:1 on ivory */
+  --brass: #a8875a;        /* hairlines, numerals, accents; text on ink 5.0:1 */
+  --brass-text: #7d6340;   /* brass for small text on light 5.1:1 */
+  --brass-line: rgb(168 135 90 / 0.45);
+  --oxblood: #7a2430;      /* sparing accent: link hover, one detail 9.0:1 */
+  --line: #e4ddd1;         /* dividers */
+  --line-strong: #d3c9b8;
+  --field: #8c8476;        /* form-control borders 3.6:1 on paper */
+  --on-ink: #ede7dc;       /* body text on ink 13.6:1 */
+  --on-ink-muted: #aba59a; /* secondary text on ink 6.8:1 */
+
+  /* ---- Type ------------------------------------------------------------- */
+  --font-serif: 'Cormorant Garamond', 'Cormorant Fallback', 'Times New Roman', Georgia, serif;
+  --font-sans: 'Source Sans 3', 'Source Sans Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+
+  --step--2: 0.75rem;                                       /* 12  eyebrow */
+  --step--1: 0.875rem;                                      /* 14  small */
+  --step-0: clamp(1.0625rem, 1.02rem + 0.18vw, 1.125rem);   /* 17→18 body */
+  --step-1: clamp(1.1875rem, 1.1rem + 0.4vw, 1.375rem);     /* 19→22 lead */
+  --step-2: clamp(1.4rem, 1.25rem + 0.7vw, 1.75rem);        /* 22→28 */
+  --step-3: clamp(1.75rem, 1.45rem + 1.3vw, 2.5rem);        /* 28→40 */
+  --step-4: clamp(2.2rem, 1.6rem + 2.6vw, 3.75rem);         /* 35→60 section */
+  --step-5: clamp(2.65rem, 1.6rem + 4.4vw, 5.5rem);         /* 42→88 display */
+
+  --leading-tight: 1.04;
+  --leading-snug: 1.18;
+  --leading-body: 1.65;
+  --tracking-caps: 0.18em;
+  --measure: 68ch;
+
+  /* ---- Space (4px base) ------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section: clamp(4.5rem, 2.8rem + 7vw, 9.5rem);
+  --section-sm: clamp(3rem, 2rem + 4vw, 6rem);
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --container: 76rem;      /* 1216px */
+  --container-wide: 88rem; /* 1408px */
+  --gutter: clamp(1.25rem, 0.6rem + 3.2vw, 3rem);
+  --header-h: 5.5rem;
+  --header-h-condensed: 4.25rem;
+  --bar-h: 3.75rem;        /* mobile call / inquire bar */
+
+  /* ---- Lines, radius, motion -------------------------------------------- */
+  --hairline: 1px solid var(--line);
+  --hairline-brass: 1px solid var(--brass-line);
+  --radius: 2px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur: 280ms;
+  --focus: 2px solid var(--ink);
+  --focus-on-ink: 2px solid var(--brass);
+}
+
+@media (min-width: 64em) {
+  :root {
+    --header-h: 6rem;
+  }
+}

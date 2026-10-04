@@ -1,0 +1,38 @@
+---
+/**
+ * Responsive photograph from the CMS media folder.
+ * Generates AVIF + WebP with a JPEG fallback at 480/768/1200/1600/2000 px
+ * (never wider than the master), with explicit width/height to prevent
+ * layout shift. Lazy by default; pass `priority` for the hero only.
+ */
+import { Picture } from 'astro:assets';
+import { requireImage } from '../lib/images';
+
+interface Props {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  class?: string;
+  pictureClass?: string;
+  widths?: number[];
+}
+const { src, alt, sizes, priority = false, class: cls, pictureClass, widths = [480, 768, 1200, 1600, 2000] } = Astro.props;
+const image = requireImage(src, alt || 'decorative image');
+const usable = widths.filter((w) => w < image.width);
+usable.push(image.width);
+---
+<Picture
+  src={image}
+  alt={alt}
+  widths={usable}
+  sizes={sizes}
+  formats={['avif', 'webp']}
+  fallbackFormat="jpg"
+  quality={priority ? 72 : 68}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding={priority ? 'sync' : 'async'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  class={cls}
+  pictureAttributes={{ class: pictureClass }}
+/>

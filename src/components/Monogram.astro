@@ -1,0 +1,9 @@
+---
+/** The column "H" monogram in currentColor. Decorative by default. */
+import raw from '../assets/brand/monogram-current.svg?raw';
+interface Props { class?: string; label?: string }
+const { class: cls = '', label } = Astro.props;
+const a11y = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"';
+const svg = raw.replace(/ role="img" aria-label="H monogram"/, '').replace('<svg ', `<svg class="${cls}" ${a11y} `);
+---
+<Fragment set:html={svg} />

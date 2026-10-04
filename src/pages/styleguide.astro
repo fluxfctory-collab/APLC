@@ -1,0 +1,317 @@
+---
+/**
+ * /styleguide — living reference for the design system.
+ * noindex, and excluded from the sitemap (astro.config.mjs).
+ */
+import Base from '../layouts/Base.astro';
+import Arrow from '../components/Arrow.astro';
+import SectionMarker from '../components/SectionMarker.astro';
+import Seal from '../components/Seal.astro';
+import Monogram from '../components/Monogram.astro';
+import Badge from '../components/Badge.astro';
+import Photo from '../components/Photo.astro';
+import { getCredentials } from '../lib/site';
+
+const credentials = await getCredentials();
+
+const swatches = [
+  { name: 'Ivory', token: '--ivory', hex: '#F7F3EC', use: 'Page background' },
+  { name: 'Paper', token: '--paper', hex: '#FFFDF9', use: 'Cards, form surfaces' },
+  { name: 'Ink', token: '--ink', hex: '#1B1E24', use: 'Text, dark sections · 15.1:1' },
+  { name: 'Slate', token: '--slate', hex: '#4A505C', use: 'Secondary text · 7.3:1' },
+  { name: 'Brass', token: '--brass', hex: '#A8875A', use: 'Hairlines, numerals; text on ink 5.0:1' },
+  { name: 'Brass text', token: '--brass-text', hex: '#7D6340', use: 'Small brass text on light · 5.1:1' },
+  { name: 'Oxblood', token: '--oxblood', hex: '#7A2430', use: 'Sparing accent — link hover · 9.0:1' },
+  { name: 'Line', token: '--line', hex: '#E4DDD1', use: 'Dividers' },
+  { name: 'Field', token: '--field', hex: '#8C8476', use: 'Form borders · 3.6:1' },
+];
+
+const type = [
+  { cls: 'display', label: 'Display — step 5', sample: 'Counsel for the divorce where <em>more is at stake.</em>' },
+  { cls: 'title', label: 'Title — step 4', sample: 'A practice focused on the <em>financial heart</em> of family law.' },
+  { cls: 'title-sm', label: 'Title small — step 3', sample: 'Complex Community Property Partitions' },
+  { cls: 'heading', label: 'Heading — step 2', sample: 'Specialist credentials' },
+];
+---
+
+<Base title="Style guide | Helen Popich Harris, APLC" description="Design system reference." noindex>
+  <section class="section sg-hero">
+    <div class="container">
+      <p class="eyebrow eyebrow--ruled">Design system</p>
+      <h1 class="display">Quiet authority</h1>
+      <p class="lead sg-lead">The visual language of a private wealth office or a fine-paper stationer: calm, discreet, unhurried. This page documents the tokens and components used across the site.</p>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="01" label="Colour" />
+      <ul role="list" class="sg-swatches">
+        {
+          swatches.map((s) => (
+            <li>
+              <span class="sg-chip" style={`background:var(${s.token})`} />
+              <strong class="serif sg-name">{s.name}</strong>
+              <code>{s.token} · {s.hex}</code>
+              <span class="small muted">{s.use}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="02" label="Typography" />
+      <div class="sg-type">
+        {
+          type.map((t) => (
+            <div class="sg-type__row">
+              <span class="eyebrow">{t.label}</span>
+              <p class={`serif ${t.cls}`} set:html={t.sample} />
+            </div>
+          ))
+        }
+        <div class="sg-type__row">
+          <span class="eyebrow">Lead — step 1 · Source Sans 3</span>
+          <p class="lead">Helen Popich Harris represents clients in divorce, complex community property partitions, and support matters involving significant assets.</p>
+        </div>
+        <div class="sg-type__row">
+          <span class="eyebrow">Body — 17→18px / 1.65 · max 68ch</span>
+          <div class="prose">
+            <p>Louisiana is a community property state. In general, property acquired by either spouse during the marriage is presumed to belong to the community, while property owned before the marriage is generally separate. <a href="#">An inline link</a> uses a brass underline and turns oxblood on hover.</p>
+          </div>
+        </div>
+        <div class="sg-type__row">
+          <span class="eyebrow">Eyebrow</span>
+          <p class="eyebrow eyebrow--ruled">Lafayette, Louisiana · Family Law</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="03" label="Buttons & links" />
+      <div class="sg-row">
+        <a class="btn" href="#">Schedule a consultation <Arrow /></a>
+        <a class="btn btn--ghost" href="#">Call 337.291.6092</a>
+        <a class="btn btn--sm" href="#">Small button</a>
+        <a class="text-link" href="#">View all practice areas <Arrow /></a>
+      </div>
+      <div class="sg-row sg-dark on-ink">
+        <a class="btn btn--light" href="#">Send an inquiry <Arrow /></a>
+        <a class="btn btn--ghost-light" href="#">Ghost on ink</a>
+        <a class="text-link" href="#">Text link on ink <Arrow /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="04" label="Markers, rules & marks" />
+      <SectionMarker num="01" label="Approach" />
+      <hr class="rule rule--brass" />
+      <div class="sg-row sg-marks">
+        <Seal variant="color" class="sg-seal" />
+        <span class="sg-seal-ink"><Seal class="sg-seal" /></span>
+        <span class="sg-dark sg-seal-wrap on-ink"><Seal class="sg-seal sg-seal--brass" /></span>
+        <Monogram class="sg-mono" label="Monogram" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="05" label="Credentials & badge slots" />
+      <div class="sg-dark sg-creds on-ink">
+        {
+          credentials.slice(0, 3).map((c) => (
+            <div class="credential">
+              <span class="credential__issuer">{c.data.issuer}</span>
+              <span class="credential__title">{c.data.title}</span>
+            </div>
+          ))
+        }
+      </div>
+      <p class="small muted sg-note">Badge slots: official embed → official image on a plate → typographic fallback.</p>
+      <div class="sg-badges">
+        {credentials.map((c) => <Badge credential={c} fallback />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="06" label="Card, frame & FAQ" />
+      <div class="sg-grid">
+        <div class="card">
+          <p class="eyebrow">Card</p>
+          <h3 class="heading">Personal attention</h3>
+          <p class="muted">Paper surface, hairline border, brass top rule.</p>
+        </div>
+        <div class="frame sg-frame">
+          <Photo src="/src/assets/uploads/portrait-desk.jpg" alt="Helen Popich Harris at her desk." sizes="(min-width: 48em) 360px, 90vw" widths={[480, 768]} />
+        </div>
+        <div class="faq">
+          <details>
+            <summary>What is a QDRO? <span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>A court order that allows a qualified plan to pay benefits to a former spouse.</p></div>
+          </details>
+          <details>
+            <summary>Can support be changed? <span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Generally, when there is a material change in circumstances.</p></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="07" label="Form controls" />
+      <form class="sg-form" onsubmit="return false" novalidate>
+        <div class="field">
+          <label class="field__label" for="sg-name">Full name<span class="field__req" aria-hidden="true">*</span></label>
+          <input class="input" id="sg-name" type="text" autocomplete="off" />
+        </div>
+        <div class="field has-error">
+          <label class="field__label" for="sg-email">Email<span class="field__req" aria-hidden="true">*</span></label>
+          <input class="input" id="sg-email" type="email" aria-invalid="true" aria-describedby="sg-email-err" value="helen@" />
+          <p class="field__error" id="sg-email-err">Please enter a valid email address.</p>
+        </div>
+        <div class="field">
+          <label class="field__label" for="sg-type">Matter type</label>
+          <select class="select" id="sg-type"><option>Divorce</option><option>Spousal Support</option></select>
+          <p class="field__help">Helper text sits below the control in slate.</p>
+        </div>
+        <fieldset class="fieldset">
+          <legend class="fieldset__legend">Preferred contact method</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="sg-m" checked /> Phone</label>
+            <label class="choice"><input type="radio" name="sg-m" /> Email</label>
+          </div>
+        </fieldset>
+        <div class="field sg-wide">
+          <label class="field__label" for="sg-msg">Message <span class="field__opt">(optional)</span></label>
+          <textarea class="textarea" id="sg-msg"></textarea>
+        </div>
+        <label class="consent sg-wide"><input type="checkbox" /> <span>I understand that submitting this form does not create an attorney–client relationship.</span></label>
+      </form>
+    </div>
+  </section>
+
+  <section class="section section--sm sg-block">
+    <div class="container">
+      <SectionMarker num="08" label="Review marker" />
+      <p>Office hours: Monday – Thursday, 9:00 a.m. – 4:00 p.m. [[CONFIRM: hours are unverified]]</p>
+      <p class="small muted sg-note">Visible only in review mode; removed automatically in production.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sg-hero {
+    padding-bottom: 2rem;
+  }
+  .sg-lead {
+    margin-top: 1.5rem;
+  }
+  .sg-block {
+    border-top: 1px solid var(--line);
+  }
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 2rem 1.5rem;
+  }
+  .sg-swatches li {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .sg-chip {
+    display: block;
+    height: 5.5rem;
+    border: 1px solid var(--line);
+    margin-bottom: 0.5rem;
+  }
+  .sg-name {
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+  code {
+    font-size: 0.8125rem;
+    color: var(--slate);
+  }
+  .sg-type {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .sg-type__row {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 1.5rem;
+  }
+  .sg-dark {
+    background: var(--ink);
+    color: var(--on-ink);
+    padding: 2rem;
+    margin-top: 1.5rem;
+  }
+  .sg-marks {
+    margin-top: 2rem;
+  }
+  .sg-marks :global(.sg-seal) {
+    width: 9rem;
+    height: auto;
+  }
+  .sg-seal-wrap {
+    margin-top: 0;
+    padding: 1rem;
+    color: var(--brass);
+  }
+  .sg-marks :global(.sg-mono) {
+    width: 5rem;
+    height: auto;
+    color: var(--ink);
+  }
+  .sg-creds {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 2rem;
+  }
+  .sg-note {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .sg-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+  }
+  .sg-grid {
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    align-items: start;
+  }
+  .sg-frame {
+    max-width: 22rem;
+  }
+  .sg-form {
+    display: grid;
+    gap: 1.5rem 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    max-width: 52rem;
+  }
+  .sg-wide {
+    grid-column: 1 / -1;
+  }
+</style>

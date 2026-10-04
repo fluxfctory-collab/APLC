@@ -1,0 +1,134 @@
+---
+/** Closing call-to-action band: ink, inset brass frame, phone set large. */
+import Arrow from './Arrow.astro';
+import Monogram from './Monogram.astro';
+import { getSettings, telHref } from '../lib/site';
+import { inline } from '../lib/text';
+
+interface Props {
+  heading: string;
+  body?: string;
+  buttonLabel: string;
+  eyebrow?: string;
+}
+const { heading, body = '', buttonLabel, eyebrow = 'Consultation' } = Astro.props;
+const settings = await getSettings();
+---
+<section class="cta-band on-ink" aria-labelledby="cta-band-title">
+  <div class="container container--wide">
+    <div class="cta-band__frame">
+      <Monogram class="cta-band__mark" />
+      <p class="eyebrow cta-band__eyebrow">{eyebrow}</p>
+      <h2 id="cta-band-title" class="title cta-band__title" set:html={inline(heading)} />
+      {body && <p class="cta-band__body">{body}</p>}
+      <div class="cta-band__actions">
+        <a class="cta-band__phone" href={telHref(settings)}>
+          <span class="cta-band__phone-label">Call the office</span>
+          <span class="cta-band__phone-number">{settings.phone_display}</span>
+        </a>
+        <span class="cta-band__or" aria-hidden="true">or</span>
+        <a class="btn btn--light" href="/contact/#inquiry">{buttonLabel} <Arrow /></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    background: var(--ink);
+    color: var(--on-ink);
+    padding-block: clamp(1.25rem, 0.5rem + 2vw, 2.5rem);
+  }
+
+  .cta-band__frame {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: clamp(3.5rem, 2rem + 6vw, 7.5rem) clamp(1.25rem, 0.5rem + 4vw, 4rem);
+    border: 1px solid var(--brass-line);
+  }
+
+  .cta-band :global(.cta-band__mark) {
+    position: absolute;
+    width: min(46rem, 110%);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--brass);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  .cta-band__eyebrow {
+    position: relative;
+    color: var(--brass);
+    margin-bottom: 1.25rem;
+  }
+
+  .cta-band__title {
+    position: relative;
+    max-width: 18ch;
+    color: var(--on-ink);
+  }
+
+  .cta-band__body {
+    position: relative;
+    max-width: 38rem;
+    margin-top: 1.25rem;
+    color: var(--on-ink-muted);
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  .cta-band__actions {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem 2rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+
+  .cta-band__phone {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--on-ink);
+    text-decoration: none;
+  }
+
+  .cta-band__phone-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  .cta-band__phone-number {
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 1.5rem + 1.5vw, 2.6rem);
+    font-weight: 500;
+    line-height: 1.1;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .cta-band__phone:hover .cta-band__phone-number {
+    color: var(--brass);
+  }
+
+  .cta-band__or {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--on-ink-muted);
+  }
+</style>

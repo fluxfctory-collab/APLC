@@ -1,0 +1,42 @@
+{
+  "review_mode": true,
+  "firm_name": "Helen Popich Harris, APLC",
+  "attorney_name": "Helen Popich Harris",
+  "attorney_title": "Attorney at Law",
+  "header_tagline": "Board Certified Family Law Specialist",
+  "phone_display": "337.291.6092",
+  "phone_link": "+13372916092",
+  "fax_display": "337.233.5673",
+  "email": "Helen@harrisaplc.com",
+  "address": {
+    "street": "321 West Main Street",
+    "suite": "Suite 2-D",
+    "city": "Lafayette",
+    "state": "Louisiana",
+    "state_abbr": "LA",
+    "zip": "70501"
+  },
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=321+West+Main+Street+Suite+2-D+Lafayette+LA+70501",
+  "map_embed_url": "https://www.google.com/maps?q=321+West+Main+Street,+Lafayette,+LA+70501&output=embed",
+  "geo": { "lat": 30.2228, "lng": -92.0211 },
+  "hours": [
+    {
+      "label": "Monday – Thursday",
+      "time": "9:00 a.m. – 4:00 p.m.",
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "09:00",
+      "closes": "16:00"
+    }
+  ],
+  "hours_note": "[[CONFIRM: hours come from a directory listing — please verify, including Friday]]",
+  "area_served": ["Lafayette", "Lafayette Parish", "Acadiana"],
+  "profiles": [
+    { "label": "American Academy of Matrimonial Lawyers", "url": "https://www.aaml.org/lawyer/helen-harris/" },
+    { "label": "Super Lawyers", "url": "https://profiles.superlawyers.com/louisiana/lafayette/lawyer/helen-popich-harris/d2dcb886-39a9-4604-bf7f-1a080adbfed5.html" },
+    { "label": "Martindale-Hubbell", "url": "" },
+    { "label": "Acadiana Profiles Top Lawyers", "url": "" }
+  ],
+  "footer_disclaimer": "The information on this website is general information, not legal advice. Contacting the firm does not create an attorney–client relationship. Please do not send confidential information through this website. [[CONFIRM: final disclaimer wording]]",
+  "responsible_attorney": "Helen Popich Harris is responsible for the content of this website. Principal office: Lafayette, Louisiana.",
+  "default_share_image": "/og/og-default.jpg"
+}
