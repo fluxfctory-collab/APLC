@@ -1,0 +1,138 @@
+---
+/**
+ * Numbered index of practice areas (01–06) — an editorial table of contents
+ * rather than cards. Each row links to the area's own page.
+ */
+import Arrow from './Arrow.astro';
+import { getPracticeAreas } from '../lib/site';
+import { pad } from '../lib/text';
+
+interface Props { headingLevel?: 'h3' | 'h2' }
+const { headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const areas = await getPracticeAreas();
+---
+<ol role="list" class="pindex">
+  {
+    areas.map((area, i) => (
+      <li class="pindex__item" data-reveal style={`--reveal-delay:${i * 50}ms`}>
+        <span class="pindex__num" aria-hidden="true">{pad(i + 1)}</span>
+        <Heading class="pindex__title">
+          <a href={`/practice-areas/${area.id}/`}>{area.data.title}</a>
+        </Heading>
+        <p class="pindex__summary">{area.data.summary}</p>
+        <Arrow class="pindex__arrow" />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .pindex {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .pindex__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 1.5rem;
+    grid-template-areas:
+      'num title arrow'
+      'num summary summary';
+    column-gap: 1rem;
+    row-gap: 0.5rem;
+    align-items: baseline;
+    padding-block: clamp(1.4rem, 1rem + 1.2vw, 2.1rem);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .pindex__item::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--brass);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 420ms var(--ease);
+  }
+
+  .pindex__item:hover::before,
+  .pindex__item:has(a:focus-visible)::before {
+    transform: scaleX(1);
+  }
+
+  .pindex__num {
+    grid-area: num;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--brass-text);
+    font-variant-numeric: lining-nums;
+  }
+
+  .pindex__title {
+    grid-area: title;
+    font-size: clamp(1.55rem, 1.2rem + 1.3vw, 2.35rem);
+    line-height: 1.12;
+  }
+
+  .pindex__title a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  /* Whole row is clickable; the link keeps a single accessible name. */
+  .pindex__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .pindex__title a:focus-visible {
+    outline: none;
+  }
+
+  .pindex__item:has(a:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+
+  .pindex__item:hover .pindex__title a {
+    color: var(--oxblood);
+  }
+
+  .pindex__summary {
+    grid-area: summary;
+    color: var(--slate);
+    max-width: 36rem;
+  }
+
+  .pindex__item :global(.pindex__arrow) {
+    grid-area: arrow;
+    justify-self: end;
+    width: 1.35rem;
+    color: var(--brass-text);
+    transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .pindex__item:hover :global(.pindex__arrow) {
+    transform: translateX(4px);
+    color: var(--oxblood);
+  }
+
+  @media (min-width: 52em) {
+    .pindex__item {
+      grid-template-columns: 4.5rem minmax(0, 1.15fr) minmax(0, 1fr) 2.5rem;
+      grid-template-areas: 'num title summary arrow';
+      column-gap: clamp(1.5rem, 1rem + 2vw, 3.5rem);
+      align-items: center;
+    }
+    .pindex__num {
+      font-size: 1.5rem;
+    }
+  }
+</style>

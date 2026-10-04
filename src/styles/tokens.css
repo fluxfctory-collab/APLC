@@ -90,7 +90,7 @@
   --step-2: clamp(1.4rem, 1.25rem + 0.7vw, 1.75rem);        /* 22→28 */
   --step-3: clamp(1.75rem, 1.45rem + 1.3vw, 2.5rem);        /* 28→40 */
   --step-4: clamp(2.2rem, 1.6rem + 2.6vw, 3.75rem);         /* 35→60 section */
-  --step-5: clamp(2.65rem, 1.6rem + 4.4vw, 5.5rem);         /* 42→88 display */
+  --step-5: clamp(2.65rem, 1.6rem + 3.9vw, 5rem);           /* 42→80 display */
 
   --leading-tight: 1.04;
   --leading-snug: 1.18;

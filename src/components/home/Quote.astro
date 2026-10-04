@@ -1,0 +1,96 @@
+---
+/**
+ * Philosophy pull-quote over a faint, oversized seal watermark (~4%),
+ * echoing the letterhead.
+ */
+import Seal from '../Seal.astro';
+
+interface Props { quote: { text: string; attribution: string } }
+const { quote } = Astro.props;
+---
+<section class="section quote" aria-label="Philosophy">
+  <div class="quote__watermark" aria-hidden="true">
+    <Seal decorative class="quote__seal" />
+  </div>
+  <div class="container">
+    <figure class="quote__figure" data-reveal>
+      <span class="quote__mark" aria-hidden="true">“</span>
+      <blockquote class="quote__text">
+        <p>{quote.text}</p>
+      </blockquote>
+      <figcaption class="quote__by">
+        <span class="quote__rule" aria-hidden="true"></span>
+        <span>{quote.attribution}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .quote {
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+  }
+
+  .quote__watermark {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: clamp(36rem, 70vw, 64rem);
+    transform: translate(-38%, -50%);
+    color: var(--ink);
+    opacity: 0.045;
+    pointer-events: none;
+  }
+
+  .quote__watermark :global(.quote__seal) {
+    width: 100%;
+    height: auto;
+  }
+
+  .quote__figure {
+    position: relative;
+    max-width: 52rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .quote__mark {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: clamp(5rem, 4rem + 4vw, 8rem);
+    line-height: 0.6;
+    height: 0.45em;
+    color: var(--brass);
+  }
+
+  .quote__text p {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.75rem, 1.2rem + 2.3vw, 3.1rem);
+    line-height: 1.24;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  .quote__by {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: clamp(1.75rem, 1.25rem + 1.5vw, 2.75rem);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--slate);
+  }
+
+  .quote__rule {
+    width: 2.5rem;
+    height: 1px;
+    background: var(--brass);
+  }
+</style>

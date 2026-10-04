@@ -1,0 +1,82 @@
+---
+/** 03 · Distinction — three pillars with roman numerals and brass rules. */
+import SectionMarker from '../SectionMarker.astro';
+import { inline, roman } from '../../lib/text';
+
+interface Props {
+  pillars: { label: string; heading: string; items: { title: string; body: string }[] };
+}
+const { pillars } = Astro.props;
+---
+<section class="section pillars" aria-labelledby="pillars-title">
+  <div class="container">
+    <div class="pillars__head">
+      <SectionMarker num="03" label={pillars.label} />
+      <h2 id="pillars-title" class="title" set:html={inline(pillars.heading)} data-reveal />
+    </div>
+    <ol role="list" class="pillars__grid">
+      {
+        pillars.items.map((p, i) => (
+          <li class="pillar" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+            <span class="pillar__num" aria-hidden="true">{roman(i + 1)}.</span>
+            <h3 class="pillar__title heading">{p.title}</h3>
+            <p class="pillar__body">{p.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .pillars__head {
+    max-width: 44rem;
+    margin-bottom: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  }
+
+  .pillars__grid {
+    display: grid;
+    gap: 2.75rem;
+  }
+
+  .pillar {
+    position: relative;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 3.5rem;
+    height: 1px;
+    background: var(--brass);
+  }
+
+  .pillar__num {
+    display: block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: var(--brass-text);
+    margin-bottom: 1.25rem;
+  }
+
+  .pillar__title {
+    margin-bottom: 0.9rem;
+  }
+
+  .pillar__body {
+    color: var(--slate);
+  }
+
+  @media (min-width: 52em) {
+    .pillars__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: clamp(2rem, 1rem + 3vw, 4.5rem);
+    }
+  }
+</style>

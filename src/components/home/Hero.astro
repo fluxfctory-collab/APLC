@@ -1,0 +1,211 @@
+---
+/**
+ * Home hero — split editorial layout. Portrait is the LCP element: eager,
+ * fetchpriority=high, never animated. On phones the portrait comes first,
+ * cropped to face and torso.
+ */
+import Photo from '../Photo.astro';
+import Arrow from '../Arrow.astro';
+import { getSettings, telHref } from '../../lib/site';
+import { inline, fill } from '../../lib/text';
+
+interface Props {
+  hero: {
+    eyebrow: string;
+    headline: string;
+    subhead: string;
+    primary_cta: string;
+    secondary_cta: string;
+    credential_line: string;
+    image: { src: string; alt: string };
+  };
+}
+const { hero } = Astro.props;
+const settings = await getSettings();
+const creds = hero.credential_line.split('·').map((s) => s.trim());
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container container--wide hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow eyebrow--ruled hero__eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title" class="display hero__title" set:html={inline(hero.headline)} />
+      <p class="lead hero__lead">{hero.subhead}</p>
+      <div class="hero__actions">
+        <a class="btn" href="/contact/#inquiry">{hero.primary_cta} <Arrow /></a>
+        <a class="btn btn--ghost" href={telHref(settings)}>{fill(hero.secondary_cta, settings)}</a>
+      </div>
+      <ul role="list" class="hero__creds">
+        {creds.map((c) => <li>{c}</li>)}
+      </ul>
+    </div>
+
+    <figure class="hero__figure">
+      <div class="frame hero__frame">
+        <Photo
+          src={hero.image.src}
+          alt={hero.image.alt}
+          priority
+          sizes="(min-width: 64em) min(40vw, 34rem), 100vw"
+          class="hero__img"
+        />
+      </div>
+      <figcaption class="hero__caption">
+        <span class="hero__caption-name">{settings.attorney_name}</span>
+        <span class="hero__caption-meta">{settings.address.city}, {settings.address.state}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: clamp(0.5rem, 0rem + 2vw, 2rem);
+    padding-bottom: clamp(3rem, 2rem + 3vw, 4rem);
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  /* ---- Copy ---- */
+  .hero__eyebrow {
+    margin-bottom: clamp(1.25rem, 1rem + 1vw, 2rem);
+  }
+
+  .hero__title {
+    max-width: 13ch;
+  }
+
+  .hero__title :global(em) {
+    display: inline;
+  }
+
+  .hero__lead {
+    margin-top: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+    max-width: 37rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem 1rem;
+    margin-top: clamp(1.75rem, 1.25rem + 1.5vw, 2.75rem);
+  }
+
+  .hero__creds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0;
+    margin-top: clamp(2rem, 1.5rem + 1.5vw, 2.5rem);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-strong);
+    max-width: 38rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: var(--slate);
+  }
+
+  .hero__creds li:not(:last-child)::after {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    margin: 0 0.85rem 0.2em;
+    border-radius: 50%;
+    background: var(--brass);
+    vertical-align: middle;
+  }
+
+  /* ---- Portrait ---- */
+  .hero__figure {
+    position: relative;
+    order: -1;
+    margin-inline: calc(var(--gutter) * -1);
+  }
+
+  .hero__frame {
+    aspect-ratio: 5 / 4.6;
+    overflow: visible;
+  }
+
+  .hero__frame::before {
+    display: none;
+  }
+
+  .hero__frame :global(picture),
+  .hero__frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__frame :global(img) {
+    object-fit: cover;
+    object-position: 50% 22%;
+  }
+
+  .hero__caption {
+    display: none;
+  }
+
+  @media (min-width: 40em) {
+    .hero__figure {
+      margin-inline: 0;
+    }
+    .hero__frame {
+      aspect-ratio: 4 / 3.4;
+    }
+    .hero__frame::before {
+      display: block;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      align-items: center;
+      column-gap: clamp(3rem, 1rem + 5vw, 7rem);
+    }
+
+    .hero__figure {
+      order: 0;
+      display: grid;
+      justify-content: end;
+      padding-right: clamp(10px, 1.2vw, 18px);
+    }
+
+    /* Sized from the viewport height so the credentials band peeks above the fold. */
+    .hero__frame {
+      aspect-ratio: 4 / 5;
+      width: auto;
+      height: clamp(26rem, calc(100svh - var(--header-h) - 14rem), 44rem);
+    }
+
+    .hero__caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: calc(clamp(10px, 1.2vw, 18px) + 1rem);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+
+    .hero__caption-name {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+    }
+  }
+</style>

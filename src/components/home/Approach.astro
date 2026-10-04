@@ -1,0 +1,98 @@
+---
+/** 01 · Approach — personal practice, paired with the black-and-white portrait. */
+import Photo from '../Photo.astro';
+import SectionMarker from '../SectionMarker.astro';
+import { md, inline } from '../../lib/text';
+
+interface Props {
+  intro: { label: string; heading: string; body: string; signature: string; image: { src: string; alt: string } };
+}
+const { intro } = Astro.props;
+---
+<section class="section approach" aria-labelledby="approach-title">
+  <div class="container approach__grid">
+    <figure class="approach__figure" data-reveal>
+      <div class="frame frame--left approach__frame">
+        <Photo src={intro.image.src} alt={intro.image.alt} sizes="(min-width: 64em) 36vw, (min-width: 40em) 70vw, 100vw" />
+      </div>
+    </figure>
+    <div class="approach__copy">
+      <SectionMarker num="01" label={intro.label} />
+      <h2 id="approach-title" class="title approach__title" set:html={inline(intro.heading)} data-reveal />
+      <div class="prose approach__body" set:html={md(intro.body)} data-reveal />
+      <p class="approach__signature" data-reveal>
+        <span class="approach__signature-rule" aria-hidden="true"></span>{intro.signature}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .approach__grid {
+    display: grid;
+    gap: clamp(3rem, 2rem + 3vw, 4rem);
+  }
+
+  .approach__figure {
+    max-width: 30rem;
+    padding-left: clamp(10px, 1.2vw, 18px);
+  }
+
+  .approach__frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .approach__frame :global(picture),
+  .approach__frame :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .approach__title {
+    max-width: 18ch;
+  }
+
+  .approach__body {
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  }
+
+  .approach__body :global(p:first-child) {
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .approach__body :global(p) {
+    color: var(--slate);
+  }
+
+  .approach__signature {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.25rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .approach__signature-rule {
+    width: 2.5rem;
+    height: 1px;
+    background: var(--brass);
+  }
+
+  @media (min-width: 64em) {
+    .approach__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(4rem, 2rem + 5vw, 8rem);
+      align-items: center;
+    }
+    .approach__figure {
+      max-width: none;
+    }
+  }
+</style>
